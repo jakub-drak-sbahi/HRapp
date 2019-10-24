@@ -9,5 +9,9 @@ namespace MainApp.Models
     {
         public int Id { get; set; }
         public string JobTitle { get; set; }
+        public string Company { get; set; }
+        public DateTime ExpirationDate { get; set; }
+        public string City { get; set; }
+        public string Description { get; set; }
     }
 }
