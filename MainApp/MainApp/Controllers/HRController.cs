@@ -19,5 +19,12 @@ namespace MainApp.Controllers
         {
             return View("Index", __HRs);
         }
+        public IActionResult Details(int id)
+        {
+            if (id > __HRs.Count || id < 1)
+                return new NotFoundResult();
+            var model = __HRs[id - 1];
+            return View("Details", model);
+        }
     }
 }
