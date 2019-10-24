@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "HR employee details";
+}
+
+@model HR
+<div class="text-center">
+    <h3>ID: @Model.Id</h3>
+    <h3>First name: @Model.FirstName</h3>
+    <h3>Suranme: @Model.Surname</h3>
+    <h3>Company: @Model.Company</h3>
+    <h4>@Html.ActionLink("Go back to the HR list", "Index")</h4>
+</div>
