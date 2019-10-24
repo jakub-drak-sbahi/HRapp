@@ -12,11 +12,13 @@ namespace MainApp.Controllers
     {
         private static List<JobOffer> _jobOffers = new List<JobOffer>
         {
-            new JobOffer{Id=1, JobTitle="Backend Developer" },
+            new JobOffer{Id=1, JobTitle="Backend Developer", City="Radzyń Podlaski", Company="Spółdzielnia mleczarska SPOMLEK", Description="Opis w budowie", ExpirationDate=DateTime.Now },
             new JobOffer{Id=2, JobTitle="Frontend Developer" },
-            new JobOffer{Id=3, JobTitle="Manager" },
-            new JobOffer{Id=4, JobTitle="Teacher" },
-            new JobOffer{Id=5, JobTitle="Cook" }
+            new JobOffer{Id=3, JobTitle="Korektor", City="Rzabików", Company="PGA", Description="Zatródnimy korektora", ExpirationDate=DateTime.MaxValue},
+            new JobOffer{Id=4, JobTitle="Manager" },
+            new JobOffer{Id=5, JobTitle="Teacher" },
+            new JobOffer{Id=6, JobTitle="Cook" },
+            new JobOffer{Id=7, JobTitle="Volkswagen Passat B7 2013 przebieg 87000", City="Pszczyna", Company="PGA", Description="Wymieniony olej w skrzyni biegów, nowy rozrząd, nowe opony. Samochód jest w stanie bardzo dobrym i nie wymaga żadnego wkładu finansowego. Idealny dla rodzin a także idealny na górskie wypady.Samochód godny polecenia. Cena: 56.500,00 brutto", ExpirationDate=DateTime.MaxValue}
         };
         public IActionResult Index()
         {
