@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Job Offers";
+}
+
+@model List<JobOffer>
+<div class="text-center">
+    @foreach (var item in @Model)
+    {
+        <ul>@Html.ActionLink(
+           linkText: item.JobTitle,
+           actionName: "Details",
+           controllerName: "JobOffer",
+           routeValues: new
+           {
+               id = item.Id
+           })
+        </ul>
+    }
+</div>

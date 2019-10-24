@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Job Offer details";
+}
+
+@model JobOffer
+<div class="text-center">
+    <h3>ID: @Model.Id</h3>
+    <h3>Job offer title: @Model.JobTitle</h3>
+    <h3>Company: @Model.Company</h3>
+    <h3>City: @Model.City</h3>
+    <h3>Expiration date: @Model.ExpirationDate.ToString("dddd, dd MMMM yyyy")</h3>
+    <h3>Description: @Model.Description</h3>
+    <h4>@Html.ActionLink("Go back to the offers list", "Index")</h4>
+</div>
