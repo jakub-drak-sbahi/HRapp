@@ -13,5 +13,6 @@ namespace MainApp.Models
         public DateTime ExpirationDate { get; set; }
         public string City { get; set; }
         public string Description { get; set; }
+        public List<Application> JobApplications { get; set; } = new List<Application>();
     }
 }
