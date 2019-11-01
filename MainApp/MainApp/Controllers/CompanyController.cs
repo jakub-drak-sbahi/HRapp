@@ -94,11 +94,5 @@ namespace MainApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index"); 
         }
-
-        public IActionResult Details(int id)
-        {
-            var model = _context.Companies.Find(id);
-            return View("Details", model);
-        }
     }
 }
