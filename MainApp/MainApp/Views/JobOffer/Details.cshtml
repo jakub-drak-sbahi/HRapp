@@ -54,23 +54,28 @@
                         </div>
                     </div>
                 }
-                <div class="pt-4">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" >
-                        <button class="btn btn-rounded btn-primary mx-2" >
-                            <i class="fas fa-edit pr-2" ></i>
-                            Edit
-                        </button>
-                    </a>
+                    <div class="pt-4">
+                        <a asp-action="Edit" asp-route-id="@Model.Id">
+                            <button class="btn btn-rounded btn-primary mx-2">
+                                <i class="fas fa-edit pr-2"></i>
+                                Edit
+                            </button>
+                        </a>
 
-                    <button 
-                        class="btn btn-rounded btn-danger mx-2" 
-                        data-toggle="modal" 
-                        data-target="#confirm-delete"
-                    >
-                        <i class="fas fa-trash-alt pr-2"></i>
-                        Delete
-                    </button>
-                </div>
+                        <a asp-controller="Application" asp-action="Create" asp-route-id="@Model.Id">
+                            <button class="btn btn-rounded btn-primary mx-2">
+                                <i class="fas fa-edit pr-2"></i>
+                                Apply
+                            </button>
+                        </a>
+
+                        <button class="btn btn-rounded btn-danger mx-2"
+                                data-toggle="modal"
+                                data-target="#confirm-delete">
+                            <i class="fas fa-trash-alt pr-2"></i>
+                            Delete
+                        </button>
+                    </div>
             </div>
         </div>
     </div>
