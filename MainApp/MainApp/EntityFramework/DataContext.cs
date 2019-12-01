@@ -13,5 +13,6 @@ namespace MainApp.EntityFramework
         public DbSet<Application> JobApplications { get; set; }
         public DbSet<JobOffer> JobOffers { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<HR> HRs { get; set; }
     }
 }
