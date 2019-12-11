@@ -59,7 +59,7 @@
                 <div class="input-group">
                     @Html.EditorFor(m => m.ValidUntil, new { htmlAttributes = new { @class = "form-control", type = "Date" } })
                     <div class="input-group-append">
-                        <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
+                        <span class="input-group-text"><i class="fa fa-calendar-day"></i></span>
                     </div>
                 </div>
                 @Html.ValidationMessageFor(m => m.ValidUntil, "", new { @class = "text-danger" })
@@ -71,12 +71,12 @@
             </div>
             <a asp-area="" asp-controller="JobOffer" asp-action="Index" >
                 <button type="button" class="btn btn-rounded btn-secondary mr-2">
-                    <i class="fas fa-chevron-left pr-2" ></i>
+                    <i class="fa fa-chevron-left pr-2" ></i>
                     Cancel
                 </button>
             </a>
             <button type="submit" class="btn btn-rounded btn-primary">
-                <i class="fas fa-check pr-2" ></i>
+                <i class="fa fa-check pr-2" ></i>
                 Save
             </button>
         }
