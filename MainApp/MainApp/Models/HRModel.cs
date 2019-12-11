@@ -9,7 +9,8 @@ namespace MainApp.Models
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
-        public string Surname { get; set; }
-        public string Company { get; set; }
+        public string LastName { get; set; }
+        public virtual Company Company { get; set; }
+        public virtual int CompanyId { get; set; }
     }
 }
