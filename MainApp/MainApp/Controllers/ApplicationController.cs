@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MainApp.EntityFramework;
 using MainApp.Models;
@@ -17,9 +18,21 @@ namespace MainApp.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<ActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
-            return View("Index", _context.JobApplications);
+            int n;
+            int.TryParse(searchString, out n);
+
+            if (string.IsNullOrEmpty(searchString) || n<=0)
+                return View(await _context.JobApplications.ToListAsync());
+
+            
+            List<Application> searchResult = await _context
+                .JobApplications
+                .Where(o => o.OfferId==n)
+                .ToListAsync();
+
+            return View(searchResult);
         }
 
         public async Task<ActionResult> Create(int id)
@@ -49,6 +62,19 @@ namespace MainApp.Controllers
             };
 
             await _context.JobApplications.AddAsync(application);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return BadRequest($"id should not be null");
+            }
+
+            _context.JobApplications.Remove(new Application() { Id = id.Value });
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
