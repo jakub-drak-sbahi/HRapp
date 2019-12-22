@@ -14,5 +14,7 @@ namespace MainApp.EntityFramework
         public DbSet<JobOffer> JobOffers { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<HR> HRs { get; set; }
+        public DbSet<Candidate> Candidates { get; set; }
+        public DbSet<Admin> Admins { get; set; }
     }
 }
