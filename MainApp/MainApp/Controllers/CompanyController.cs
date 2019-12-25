@@ -6,28 +6,32 @@ using System.Threading.Tasks;
 using MainApp.EntityFramework;
 using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MainApp.Controllers
 {
     public class CompanyController : Controller
     {
-        private static List<Company> companies = new List<Company>()
-        {
-            new Company(){Id=1, Name="ABC"},
-            new Company(){Id=2, Name="DEF"},
-            new Company(){Id=3, Name="GHI"}
-        };
 
         private readonly DataContext _context;
         public CompanyController(DataContext context)
         {
             _context = context;
+            Console.WriteLine("CompanyController: " + _context.JobOffers.Count());
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
-            var model = _context.Companies.ToList();
-            return View("Index", model);
+            if (string.IsNullOrEmpty(searchString))
+                return View(await _context.Companies.ToListAsync());
+
+            List<Company> searchResult = await _context
+                .Companies
+                .Where(o => o.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                .ToListAsync();
+
+            return View(searchResult);
         }
 
         public async Task<ActionResult> Delete(int? id)
