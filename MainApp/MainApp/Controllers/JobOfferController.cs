@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MainApp.Models;
 using MainApp.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using MainApp.Authorization;
 
 namespace MainApp.Controllers
 {
@@ -18,25 +19,48 @@ namespace MainApp.Controllers
         {
             _context = context;
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
+            Role role = Role.HR;
+            string viewName = AuthorizationTools.AddViewSuffix("Index", role);
+            List<JobOffer> searchResult;
             if (string.IsNullOrEmpty(searchString))
-                return View(await _context.JobOffers.Include(x => x.Company).ToListAsync());
-
-            List<JobOffer> searchResult = await _context
-                .JobOffers.Include(x => x.Company)
-                .Where(o => o.JobTitle.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                .ToListAsync();
-
-            return View(searchResult);
+            {
+                searchResult = await _context.JobOffers.Include(x => x.Company).ToListAsync();
+            }
+            else
+            {
+                searchResult = await _context
+                    .JobOffers.Include(x => x.Company)
+                    .Where(o => o.JobTitle.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    .ToListAsync();
+            }
+            if (role == Role.HR)
+            {
+                JobOfferIndexHRView jobOfferIndexHRView = new JobOfferIndexHRView();
+                jobOfferIndexHRView.Offers = searchResult;
+                //jobOfferIndexHRView.HR = thishr;
+                jobOfferIndexHRView.HR = new HR();
+                return View(viewName, jobOfferIndexHRView);
+            }
+            else if(role == Role.CANDIDATE)
+            {
+                JobOfferIndexCandidateView jobOfferIndexCandidateView = new JobOfferIndexCandidateView();
+                jobOfferIndexCandidateView.Offers = searchResult;
+                //jobOfferIndexCandidateView.Candidate = thiscandidate;
+                jobOfferIndexCandidateView.Candidate = new Candidate();
+                return View(viewName, jobOfferIndexCandidateView);
+            }
+            //role == Role.ADMIN
+            return View(viewName, searchResult);
         }
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return BadRequest($"id shouldn't not be null");
+                return BadRequest($"id shouldn't be null");
             }
             var offer = await _context.JobOffers.FirstOrDefaultAsync(x => x.Id == id.Value);
             if (offer == null)
@@ -119,7 +143,22 @@ namespace MainApp.Controllers
             var offer = await _context.JobOffers
                 .Include(x => x.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            return View(offer);
+            Role role = Role.HR;
+            string viewName = AuthorizationTools.AddViewSuffix("Details", role);
+            if (role == Role.HR)
+            {
+                JobOfferDetailsHRView jobOfferDetailsHRView = new JobOfferDetailsHRView();
+                jobOfferDetailsHRView.Offer = offer;
+                //jobOfferIndexHRView.HR = thishr;
+                jobOfferDetailsHRView.HR = new HR()
+                {
+                    Company = offer.Company
+                };
+                //jobOfferDetailsHRView.Applications = await _context.JobApplications.Where(x => x.HR == thishr).ToListAsync();
+                jobOfferDetailsHRView.Applications = await _context.JobApplications.ToListAsync();
+                return View(viewName, jobOfferDetailsHRView);
+            }
+            return View(viewName, offer);
         }
     }
 }
