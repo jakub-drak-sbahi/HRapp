@@ -4,21 +4,99 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MainApp.Models;
+using MainApp.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 
 namespace MainApp.Controllers
 {
     public class CandidateController : Controller
     {
-        private static List<Candidate> _candidates = new List<Candidate>
-        {
-            new Candidate{Id=1, FirstName="John", LastName="Black", PhoneNumber="123456789", EmailAddress="john@black.com" },
-            new Candidate{Id=2, FirstName="Kate", LastName="Green", PhoneNumber="123222789", EmailAddress="kate@green.com" },
-            new Candidate{Id=3, FirstName="Joe", LastName="Blue", PhoneNumber="123111789", EmailAddress="joe@blue.com" },
-        };
+        private readonly DataContext _context;
 
-        public IActionResult Index()
+        public CandidateController(DataContext context)
         {
-            return View("Index", _candidates);
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
+        {
+            if (string.IsNullOrEmpty(searchString))
+                return View(await _context.Candidates.ToListAsync());
+
+            List<Candidate> searchResult = await _context
+                .Candidates
+                .Where(o => o.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                .ToListAsync();
+
+            return View(searchResult);
+        }
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return BadRequest($"id shouldn't not be null");
+            }
+            var offer = await _context.Candidates.FirstOrDefaultAsync(x => x.Id == id.Value);
+            if (offer == null)
+            {
+                return NotFound($"offer not found in DB");
+            }
+
+            return View(offer);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(Candidate model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.Id == model.Id);
+            candidate.FirstName = model.FirstName;
+            candidate.LastName = model.LastName;
+            candidate.EmailAddress = model.EmailAddress;
+            candidate.PhoneNumber = model.PhoneNumber;
+            _context.Update(candidate);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = model.Id });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return BadRequest($"id should not be null");
+            }
+
+            _context.Candidates.Remove(new Candidate() { Id = id.Value });
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> Create()
+        {
+            //don't know yet, should it be connected to Authorization profile?
+            throw new System.NotImplementedException();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(JobOfferCreateView model)
+        {
+            //don't know yet, should it be connected to Authorization profile?
+            throw new System.NotImplementedException();
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var offer = await _context.Candidates
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return View(offer);
         }
     }
 }
