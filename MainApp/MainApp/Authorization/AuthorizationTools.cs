@@ -51,16 +51,6 @@ namespace MainApp.Authorization
             Role role = await GetRoleAsync(User, context);
             return role == Role.ADMIN;
         }
-
-        public static string AddViewSuffix(string viewName, Role role)
-        {
-            //maybe this way?
-            if (role == Role.ADMIN)
-                return viewName + "Admin";
-            if (role == Role.HR)
-                return viewName + "HR";
-            return viewName + "Candidate";
-        }
     }
 }
 
