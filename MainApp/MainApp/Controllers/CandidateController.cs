@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MainApp.Models;
 using MainApp.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using MainApp.Authorization;
 
 namespace MainApp.Controllers
 {
@@ -94,9 +95,12 @@ namespace MainApp.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var offer = await _context.Candidates
+            Role role = Role.CANDIDATE;
+            var candidate = await _context.Candidates
                 .FirstOrDefaultAsync(x => x.Id == id);
-            return View(offer);
+            if(role == Role.ADMIN)
+                return View("DetailsAdmin", candidate);
+            return View("DetailsCandidate", candidate);
         }
     }
 }
