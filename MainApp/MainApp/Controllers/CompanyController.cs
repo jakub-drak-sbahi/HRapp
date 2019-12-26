@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using MainApp.Authorization;
 using MainApp.EntityFramework;
 using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -23,15 +24,22 @@ namespace MainApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
-            if (string.IsNullOrEmpty(searchString))
-                return View(await _context.Companies.ToListAsync());
+            Role role = Role.HR;
+            List<Company> searchResult;
 
-            List<Company> searchResult = await _context
+            if (string.IsNullOrEmpty(searchString))
+                searchResult = await _context.Companies.ToListAsync();
+            else
+                searchResult = await _context
                 .Companies
                 .Where(o => o.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 .ToListAsync();
-
-            return View(searchResult);
+            
+            if(role == Role.ADMIN)
+            {
+                return View("IndexAdmin", searchResult);
+            }
+            return View("IndexHRAndCandidate", searchResult);
         }
 
         public async Task<ActionResult> Delete(int? id)
