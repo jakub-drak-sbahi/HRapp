@@ -24,7 +24,6 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
             Role role = Role.HR;
-            string viewName = AuthorizationTools.AddViewSuffix("Index", role);
             List<JobOffer> searchResult;
             if (string.IsNullOrEmpty(searchString))
             {
@@ -34,7 +33,8 @@ namespace MainApp.Controllers
             {
                 searchResult = await _context
                     .JobOffers.Include(x => x.Company)
-                    .Where(o => o.JobTitle.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    .Where(o => o.JobTitle.Contains(searchString, StringComparison.OrdinalIgnoreCase)
+                    || o.Company.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                     .ToListAsync();
             }
             if (role == Role.HR)
@@ -43,7 +43,7 @@ namespace MainApp.Controllers
                 jobOfferIndexHRView.Offers = searchResult;
                 //jobOfferIndexHRView.HR = thishr;
                 jobOfferIndexHRView.HR = new HR();
-                return View(viewName, jobOfferIndexHRView);
+                return View("IndexHR", jobOfferIndexHRView);
             }
             else if(role == Role.CANDIDATE)
             {
@@ -51,10 +51,10 @@ namespace MainApp.Controllers
                 jobOfferIndexCandidateView.Offers = searchResult;
                 //jobOfferIndexCandidateView.Candidate = thiscandidate;
                 jobOfferIndexCandidateView.Candidate = new Candidate();
-                return View(viewName, jobOfferIndexCandidateView);
+                return View("IndexCandidate", jobOfferIndexCandidateView);
             }
             //role == Role.ADMIN
-            return View(viewName, searchResult);
+            return View("IndexAdmin", searchResult);
         }
         public async Task<IActionResult> Edit(int? id)
         {
@@ -144,7 +144,6 @@ namespace MainApp.Controllers
                 .Include(x => x.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
             Role role = Role.HR;
-            string viewName = AuthorizationTools.AddViewSuffix("Details", role);
             if (role == Role.HR)
             {
                 JobOfferDetailsHRView jobOfferDetailsHRView = new JobOfferDetailsHRView();
@@ -156,9 +155,11 @@ namespace MainApp.Controllers
                 };
                 //jobOfferDetailsHRView.Applications = await _context.JobApplications.Where(x => x.HR == thishr).ToListAsync();
                 jobOfferDetailsHRView.Applications = await _context.JobApplications.ToListAsync();
-                return View(viewName, jobOfferDetailsHRView);
+                return View("DetailsHR", jobOfferDetailsHRView);
             }
-            return View(viewName, offer);
+            if(role == Role.ADMIN)
+                return View("DetailsAdmin", offer);
+            return View("DetailsCandidate", offer);
         }
     }
 }
