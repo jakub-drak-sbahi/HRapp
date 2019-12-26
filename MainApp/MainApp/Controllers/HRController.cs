@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MainApp.Authorization;
 using MainApp.EntityFramework;
 using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -111,10 +112,13 @@ namespace MainApp.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
+            Role role = Role.HR;
             var hr = await _context.HRs
                 .Include(x => x.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            return View(hr);
+            if(role == Role.ADMIN)
+                return View("DetailsAdmin", hr);
+            return View("DetailsHR", hr);
         }
     }
 }
