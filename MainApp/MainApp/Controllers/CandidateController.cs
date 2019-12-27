@@ -41,7 +41,7 @@ namespace MainApp.Controllers
         {
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false || us == null || us.Id != id.Value)
+            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id.Value))
                 return new UnauthorizedResult();
 
             if (id == null)
@@ -64,7 +64,7 @@ namespace MainApp.Controllers
         {
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false || us == null || us.Id != model.Id)
+            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != model.Id))
                 return new UnauthorizedResult();
 
             if (!ModelState.IsValid)
@@ -104,7 +104,7 @@ namespace MainApp.Controllers
         {
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false || us == null || us.Id != id)
+            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id))
                 return new UnauthorizedResult();
 
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
