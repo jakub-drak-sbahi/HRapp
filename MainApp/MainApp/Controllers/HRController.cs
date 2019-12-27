@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MainApp.Authorization;
 using MainApp.EntityFramework;
 using MainApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,8 +21,12 @@ namespace MainApp.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+                return new UnauthorizedResult();
+
             if (string.IsNullOrEmpty(searchString))
                 return View(await _context.HRs.Include(x => x.Company).ToListAsync());
 
@@ -32,8 +37,12 @@ namespace MainApp.Controllers
 
             return View(searchResult);
         }
+
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+                return new UnauthorizedResult();
             if (id == null)
             {
                 return BadRequest($"id shouldn't not be null");
@@ -49,8 +58,11 @@ namespace MainApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Edit(HR model)
         {
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+                return new UnauthorizedResult();
             if (!ModelState.IsValid)
             {
                 return View();
@@ -66,8 +78,11 @@ namespace MainApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+                return new UnauthorizedResult();
             if (id == null)
             {
                 return BadRequest($"id should not be null");
@@ -78,8 +93,11 @@ namespace MainApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<ActionResult> Create()
         {
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+                return new UnauthorizedResult();
             var model = new HRCreateView
             {
                 Companies = await _context.Companies.ToListAsync()
@@ -89,9 +107,11 @@ namespace MainApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Create(HRCreateView model)
         {
-            Console.WriteLine("dupa hehe");
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+                return new UnauthorizedResult();
             if (!ModelState.IsValid)
             {
                 model.Companies = await _context.Companies.ToListAsync();
@@ -110,9 +130,12 @@ namespace MainApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
-            Role role = Role.HR;
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            if (role == Role.CANDIDATE)
+                return new UnauthorizedResult();
             var hr = await _context.HRs
                 .Include(x => x.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
