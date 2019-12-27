@@ -4,14 +4,16 @@ using MainApp.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MainApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20191227215302_FixApplicationModel")]
+    partial class FixApplicationModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,6 +53,8 @@ namespace MainApp.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired();
 
+                    b.Property<int?>("HRId");
+
                     b.Property<int?>("JobOfferId");
 
                     b.Property<string>("LastName")
@@ -63,6 +67,8 @@ namespace MainApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CandidateId");
+
+                    b.HasIndex("HRId");
 
                     b.HasIndex("JobOfferId");
 
@@ -135,8 +141,6 @@ namespace MainApp.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
-                    b.Property<int?>("HRId");
-
                     b.Property<string>("JobTitle")
                         .IsRequired();
 
@@ -152,8 +156,6 @@ namespace MainApp.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("HRId");
-
                     b.ToTable("JobOffers");
                 });
 
@@ -163,7 +165,11 @@ namespace MainApp.Migrations
                         .WithMany("Applications")
                         .HasForeignKey("CandidateId");
 
-                    b.HasOne("MainApp.Models.JobOffer", "JobOffer")
+                    b.HasOne("MainApp.Models.HR", "HR")
+                        .WithMany()
+                        .HasForeignKey("HRId");
+
+                    b.HasOne("MainApp.Models.JobOffer")
                         .WithMany("JobApplications")
                         .HasForeignKey("JobOfferId");
                 });
@@ -171,7 +177,7 @@ namespace MainApp.Migrations
             modelBuilder.Entity("MainApp.Models.HR", b =>
                 {
                     b.HasOne("MainApp.Models.Company", "Company")
-                        .WithMany("HRs")
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -182,10 +188,6 @@ namespace MainApp.Migrations
                         .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MainApp.Models.HR", "HR")
-                        .WithMany("JobOffers")
-                        .HasForeignKey("HRId");
                 });
 #pragma warning restore 612, 618
         }

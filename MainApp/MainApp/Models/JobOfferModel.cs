@@ -12,8 +12,8 @@ namespace MainApp.Models
         [Display(Name = "Job title")]
         [Required]
         public string JobTitle { get; set; }
-        public virtual Company Company { get; set; }
-        public virtual int CompanyId { get; set; }
+        public virtual Company Company { get; set; }    // to jest niepotrzebne, nie usuwalem na wszelki wypadek
+        public virtual int CompanyId { get; set; }     // to jest jeszcze bardziej niepotrzebne, bo powyzsze samo dodaje w bazie CompanyId, analogicznie jest w pozostalych miejscach jednak na wszelki wypadek jeszcze tego nie usunalem zeby uniknac nieprzeiwdzianych bledow
         [Display(Name = "Salary from")]
         public decimal? SalaryFrom { get; set; }
         [Display(Name = "Salary to")]
@@ -28,6 +28,6 @@ namespace MainApp.Models
         [Display(Name = "Valid until")]
         public DateTime? ValidUntil { get; set; }
         public List<Application> JobApplications { get; set; } = new List<Application>();
-
+        public HR HR { get; set; }
     }
 }
