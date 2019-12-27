@@ -25,6 +25,6 @@ namespace MainApp.Models
         [Required]
         public string CvUrl { get; set; }
         public Candidate Candidate { get; set; }
-        public HR HR { get; set; }  
+        public JobOffer JobOffer { get; set; }
     }
 }
