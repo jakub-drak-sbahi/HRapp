@@ -1,56 +1,69 @@
 ﻿@model IEnumerable<MainApp.Models.Candidate>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Candidates";
 }
 
-<h2>Index</h2>
+<div class="row page-box">
+    <div class="col-sm-12">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-12 col-md-4 d-flex align-items-center py-2">
+                    <h3 class="font-weight-bold mb-0">
+                        Candidate list
+                    </h3>
+                    <div>
+                        <span class="badge badge-pill badge-primary align-top">
+                            @Model.Count()
+                        </span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 py-2">
+                    @using (Html.BeginForm("Index", "Candidate", FormMethod.Get))
+                    {
+                        <div class="input-group search-input"
+                             style="border-radius: 20px">
+                            <input name="search"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Search by last name.."
+                                   aria-label="Search by last name"
+                                   aria-describedby="button-search">
+                            <div class="input-group-append">
+                                <button id="button-search"
+                                        class="btn btn-primary"
+                                        type="submit">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Email address</th>
+                    <th scope="col">Phone number</th>
+                    <th style="width: 20px"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hr in Model.OrderBy(h => h.LastName))
+                {
+                    <tr>
+                        <td>@Html.ActionLink(hr.FirstName, "Details", new { id = hr.Id })</td>
+                        <td>@Html.ActionLink(hr.LastName, "Details", new { id = hr.Id })</td>
+                        <td>@hr.EmailAddress</td>
+                        <td>@hr.PhoneNumber</td>
+                    </tr>
+                }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EmailAddress)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmailAddress)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+            </tbody>
+        </table>
+
+    </div>
+</div>
