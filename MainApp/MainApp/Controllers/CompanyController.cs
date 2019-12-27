@@ -3,31 +3,43 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using MainApp.Authorization;
 using MainApp.EntityFramework;
 using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MainApp.Controllers
 {
     public class CompanyController : Controller
     {
-        private static List<Company> companies = new List<Company>()
-        {
-            new Company(){Id=1, Name="ABC"},
-            new Company(){Id=2, Name="DEF"},
-            new Company(){Id=3, Name="GHI"}
-        };
 
         private readonly DataContext _context;
         public CompanyController(DataContext context)
         {
             _context = context;
+            Console.WriteLine("CompanyController: " + _context.JobOffers.Count());
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
-            var model = _context.Companies.ToList();
-            return View("Index", model);
+            Role role = Role.HR;
+            List<Company> searchResult;
+
+            if (string.IsNullOrEmpty(searchString))
+                searchResult = await _context.Companies.ToListAsync();
+            else
+                searchResult = await _context
+                .Companies
+                .Where(o => o.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                .ToListAsync();
+            
+            if(role == Role.ADMIN)
+            {
+                return View("IndexAdmin", searchResult);
+            }
+            return View("IndexHRAndCandidate", searchResult);
         }
 
         public async Task<ActionResult> Delete(int? id)

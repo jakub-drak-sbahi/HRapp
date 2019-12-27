@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MainApp.EntityFramework;
 using MainApp.Models;
@@ -17,9 +18,18 @@ namespace MainApp.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
-            return View("Index", _context.JobApplications);
+            if (string.IsNullOrEmpty(searchString))
+                return View(await _context.JobApplications.ToListAsync());
+
+            List<Application> searchResult = await _context
+                .JobApplications
+                .Where(o => o.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                .ToListAsync();
+
+            return View(searchResult);
         }
 
         public async Task<ActionResult> Create(int id)
