@@ -2,7 +2,7 @@
 
 namespace MainApp.Models
 {
-	public class JobOfferDetailsHRView : JobOffer 
+	public class JobOfferDetailsHRView
 	{
 		public JobOffer Offer { get; set; }
 		public HR HR { get; set; }

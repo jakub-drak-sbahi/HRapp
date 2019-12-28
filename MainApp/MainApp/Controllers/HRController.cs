@@ -42,7 +42,7 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             string email = AuthorizationTools.GetEmail(User);
-            HR us = _context.HRs.Where(h => h.EmailAddress == email).First();
+            HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
             if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id.Value))
                 return new UnauthorizedResult();
 
@@ -65,7 +65,7 @@ namespace MainApp.Controllers
         public async Task<ActionResult> Edit(HR model)
         {
             string email = AuthorizationTools.GetEmail(User);
-            HR us = _context.HRs.Where(h => h.EmailAddress == email).First();
+            HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
             if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != model.Id))
                 return new UnauthorizedResult();
 
@@ -140,7 +140,7 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Details(int id)
         {
             string email = AuthorizationTools.GetEmail(User);
-            HR us = _context.HRs.Where(h => h.EmailAddress == email).First();
+            HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
             if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id))
                 return new UnauthorizedResult();
 
