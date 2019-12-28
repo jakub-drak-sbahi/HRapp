@@ -87,6 +87,7 @@ namespace MainApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Edit(JobOffer model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
@@ -137,7 +138,7 @@ namespace MainApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-
+        [Authorize]
         public async Task<ActionResult> Create()
         {
             var model = new JobOfferCreateView
@@ -150,6 +151,7 @@ namespace MainApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Create(JobOfferCreateView model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
@@ -179,6 +181,7 @@ namespace MainApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
             var offer = await _context.JobOffers
