@@ -85,8 +85,7 @@
                     <td>@offer.Company.Name</td>
                     <td>@offer.Location</td>
                     <td>@offer.Created</td>
-                    @*TODO: Change this if to Model.HR == offer.HR*@
-                    @if (Model.HR.Company == offer.Company)
+                    @if (Model.HR == offer.HR)
                     {
                         <td>
                             <a href="@Url.Action("Edit", "JobOffer", new { id = offer.Id })"
