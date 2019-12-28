@@ -25,13 +25,24 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
-            if (string.IsNullOrEmpty(searchString))
-                return View(await _context.JobApplications.ToListAsync());
+            List<Application> searchResult;
 
-            List<Application> searchResult = await _context
-                .JobApplications
-                .Where(o => o.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                .ToListAsync();
+            if (string.IsNullOrEmpty(searchString))
+               searchResult = await _context.JobApplications
+                    .Include(x => x.JobOffer)
+                    .Include(x => x.JobOffer.HR)
+                    .Include(x => x.JobOffer.HR.Company)
+                    .ToListAsync();
+            else
+            {
+                searchResult = await _context
+                    .JobApplications
+                    .Include(x => x.JobOffer)
+                    .Include(x => x.JobOffer.HR)
+                    .Include(x => x.JobOffer.HR.Company)
+                    .Where(o => o.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    .ToListAsync();
+            }
 
             return View(searchResult);
         }

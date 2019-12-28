@@ -29,14 +29,19 @@ namespace MainApp.Controllers
             List<JobOffer> searchResult;
             if (string.IsNullOrEmpty(searchString))
             {
-                searchResult = await _context.JobOffers.Include(x => x.Company).ToListAsync();
+                searchResult = await _context.JobOffers
+                    .Include(x => x.HR)
+                    .Include(x => x.HR.Company)
+                    .ToListAsync();
             }
             else
             {
                 searchResult = await _context
-                    .JobOffers.Include(x => x.Company)
+                    .JobOffers
+                    .Include(x => x.HR)
+                    .Include(x => x.HR.Company)
                     .Where(o => o.JobTitle.Contains(searchString, StringComparison.OrdinalIgnoreCase)
-                    || o.Company.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    || o.HR.Company.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                     .ToListAsync();
             }
             string email = AuthorizationTools.GetEmail(User);
@@ -134,25 +139,21 @@ namespace MainApp.Controllers
                 if (us.Id != offer.HR.Id)
                     return new UnauthorizedResult();
             }
-            _context.JobOffers.Remove(new JobOffer() { Id = id.Value });
+            _context.JobOffers.Remove(offer);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
         [Authorize]
         public async Task<ActionResult> Create()
         {
-            var model = new JobOfferCreateView
-            {
-                Companies = await _context.Companies.ToListAsync()
-            };
-
+            var model = new JobOffer();
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> Create(JobOfferCreateView model)
+        public async Task<ActionResult> Create(JobOffer model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             if (role == Role.CANDIDATE)
@@ -160,13 +161,11 @@ namespace MainApp.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.Companies = await _context.Companies.ToListAsync();
                 return View(model);
             }
-
+            //TODO: do we have to create a new JobOffer?
             JobOffer jo = new JobOffer
             {
-                CompanyId = model.CompanyId,
                 Description = model.Description,
                 JobTitle = model.JobTitle,
                 Location = model.Location,
@@ -185,7 +184,8 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var offer = await _context.JobOffers
-                .Include(x => x.Company)
+                .Include(x => x.HR)
+                .Include(x => x.HR.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             if (role == Role.HR)

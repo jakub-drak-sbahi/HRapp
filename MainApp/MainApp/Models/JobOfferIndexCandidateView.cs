@@ -2,7 +2,7 @@
 
 namespace MainApp.Models
 {
-	public class JobOfferIndexCandidateView : JobOffer 
+	public class JobOfferIndexCandidateView
 	{
 		public IEnumerable<JobOffer> Offers { get; set; }
 		public Candidate Candidate { get; set; }
