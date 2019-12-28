@@ -7,6 +7,7 @@ using MainApp.Models;
 using MainApp.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using MainApp.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MainApp.Controllers
 {
@@ -20,8 +21,11 @@ namespace MainApp.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+                return new UnauthorizedResult();
             if (string.IsNullOrEmpty(searchString))
                 return View(await _context.Candidates.ToListAsync());
 
@@ -32,8 +36,14 @@ namespace MainApp.Controllers
 
             return View(searchResult);
         }
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            string email = AuthorizationTools.GetEmail(User);
+            Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
+            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id.Value))
+                return new UnauthorizedResult();
+
             if (id == null)
             {
                 return BadRequest($"id shouldn't not be null");
@@ -49,8 +59,14 @@ namespace MainApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Edit(Candidate model)
         {
+            string email = AuthorizationTools.GetEmail(User);
+            Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
+            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != model.Id))
+                return new UnauthorizedResult();
+
             if (!ModelState.IsValid)
             {
                 return View();
@@ -67,8 +83,11 @@ namespace MainApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+                return new UnauthorizedResult();
             if (id == null)
             {
                 return BadRequest($"id should not be null");
@@ -79,26 +98,19 @@ namespace MainApp.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> Create()
-        {
-            //don't know yet, should it be connected to Authorization profile?
-            throw new System.NotImplementedException();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(JobOfferCreateView model)
-        {
-            //don't know yet, should it be connected to Authorization profile?
-            throw new System.NotImplementedException();
-        }
-
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
-            Role role = Role.CANDIDATE;
+            string email = AuthorizationTools.GetEmail(User);
+            Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
+            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id))
+                return new UnauthorizedResult();
+
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             var candidate = await _context.Candidates
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if(role == Role.ADMIN)
+            if (role == Role.ADMIN)
                 return View("DetailsAdmin", candidate);
             return View("DetailsCandidate", candidate);
         }

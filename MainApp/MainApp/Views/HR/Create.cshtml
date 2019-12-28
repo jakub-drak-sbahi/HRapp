@@ -27,14 +27,19 @@
                 @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
             </div>
-            <a asp-area="" asp-controller="HR" asp-action="Index" >
+            <div class="form-group">
+                @Html.LabelFor(m => m.EmailAddress)
+                @Html.EditorFor(m => m.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger" })
+            </div>
+            <a asp-area="" asp-controller="HR" asp-action="Index">
                 <button type="button" class="btn btn-rounded btn-secondary mr-2">
-                    <i class="fa fa-chevron-left pr-2" ></i>
+                    <i class="fa fa-chevron-left pr-2"></i>
                     Cancel
                 </button>
             </a>
             <button type="submit" class="btn btn-rounded btn-primary">
-                <i class="fa fa-check pr-2" ></i>
+                <i class="fa fa-check pr-2"></i>
                 Save
             </button>
         }
