@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MainApp.Authorization;
 using MainApp.EntityFramework;
 using MainApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +21,10 @@ namespace MainApp.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             if (string.IsNullOrEmpty(searchString))
                 return View(await _context.JobApplications.ToListAsync());
 
@@ -40,6 +44,7 @@ namespace MainApp.Controllers
 
         [HttpPost]  
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Create(Application model, int id)
         {
             if (!ModelState.IsValid)
