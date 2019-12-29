@@ -164,10 +164,6 @@ namespace MainApp.Controllers
                 Name = "Drunkin nonuts"
             });
             _context.SaveChanges();
-            //_context.JobApplications.Add(new Application()
-            //{
-            //    //TODO: add some after migrations
-            //});
             _context.HRs.Add(new HR()
             {
                 FirstName = "Bogumiła",
@@ -203,11 +199,18 @@ namespace MainApp.Controllers
                 EmailAddress = "anna.wanna@gmail.com",
                 Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Sunbucks coffee")
             });
+            _context.HRs.Add(new HR()
+            {
+                FirstName = "Żaneta",
+                LastName = "Podsiadło",
+                EmailAddress = "janette.podsiadlo@gmail.com",
+                Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Binbows")
+            });
             _context.SaveChanges();
             _context.JobOffers.Add(new JobOffer()
             {
                 JobTitle = "Package manager",
-                Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Sunbucks coffee"),
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Wanna"),
                 Created = DateTime.Now,
                 Description = "Pinnace Brethren of the Coast heave to jury mast bring a spring upon her cable mizzenmast" +
                 "bilge bilge rat chandler crow's nest. Cackle fruit long clothes chantey rigging topsail brig Barbary Coast " +
@@ -216,7 +219,7 @@ namespace MainApp.Controllers
             _context.JobOffers.Add(new JobOffer()
             {
                 JobTitle = "Pirate recruiter",
-                Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Binbows"),
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Podsiadło"),
                 Created = DateTime.Now,
                 Description = "Belay lookout chase guns carouser draught scurvy barque haul wind strike colors weigh anchor." +
                 "Walk the plank Spanish Main aye knave yo - ho - ho Cat o'nine tails furl warp hang the jib grapple. " +
@@ -225,7 +228,7 @@ namespace MainApp.Controllers
             _context.JobOffers.Add(new JobOffer()
             {
                 JobTitle = "Younger assisstant",
-                Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Niky"),
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Skorupka"),
                 Created = DateTime.Now,
                 Description = "Pinnace wench Buccaneer chase furl chase guns heave to nipper clap of thunder tackle. " +
                 "Gally splice the main brace execution dock Privateer ahoy stern no prey, no pay quarterdeck bowsprit scourge of the seven seas." +
@@ -234,7 +237,7 @@ namespace MainApp.Controllers
             _context.JobOffers.Add(new JobOffer()
             {
                 JobTitle = "Younger assassin",
-                Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Abibas"),
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Wanna"),
                 Created = DateTime.Now,
                 Description = "Scuttle clap of thunder ho salmagundi six pounders grog blossom cutlass red ensign ballast wherry." +
                 " Letter of Marque Arr ye come about chase guns code of conduct scuttle jury mast handsomely gabion." +
@@ -243,11 +246,56 @@ namespace MainApp.Controllers
             _context.JobOffers.Add(new JobOffer()
             {
                 JobTitle = "Younger chief executor",
-                Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Niky"),
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Kurka"),
                 Created = DateTime.Now,
                 Description = "Hempen halter boom bounty hornswaggle fore ballast Sink me hearties ye blow the man down." +
                 " League topsail Blimey trysail yo-ho-ho rutters yawl scuttle dance the hempen jig Brethren of the Coast." +
                 " Warp measured fer yer chains six pounders rope's end lugger Pieces of Eight killick black spot hempen halter man-of-war."
+            });
+            _context.SaveChanges();
+            _context.JobApplications.Add(new Application()
+            {
+                FirstName = "Bartosz",
+                LastName = "Walaszek",
+                EmailAddress = "otylypan@donna.com",
+                PhoneNumber = "2377746467",
+                ContactAgreement = true,
+                Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
+                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Pirate recruiter" && x.HR.Company.Name == "Binbows"),
+                CvUrl = "www.google.com"
+            });
+            _context.JobApplications.Add(new Application()
+            {
+                FirstName = "Ryszard",
+                LastName = "Lwie Serce",
+                EmailAddress = "deus@vultInfidels.com",
+                PhoneNumber = "435777654",
+                ContactAgreement = true,
+                Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.LastName == "Lwie Serce"),
+                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Pirate recruiter" && x.HR.Company.Name == "Binbows"),
+                CvUrl = "www.google.com"
+            });
+            _context.JobApplications.Add(new Application()
+            {
+                FirstName = "Bartosz",
+                LastName = "Walaszek",
+                EmailAddress = "otylypan@donna.com",
+                PhoneNumber = "2377746467",
+                ContactAgreement = true,
+                Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
+                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Younger assisstant" && x.HR.Company.Name == "Dolce&Banana"),
+                CvUrl = "www.google.com"
+            });
+            _context.JobApplications.Add(new Application()
+            {
+                FirstName = "Bartosz",
+                LastName = "Walaszek",
+                EmailAddress = "otylypan@donna.com",
+                PhoneNumber = "2377746467",
+                ContactAgreement = true,
+                Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
+                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Package manager" && x.HR.Company.Name == "Sunbucks coffee"),
+                CvUrl = "www.google.com"
             });
             _context.SaveChanges();
             return View("Index");
