@@ -55,11 +55,7 @@ namespace MainApp.Controllers
             }
             else if (role == Role.CANDIDATE)
             {
-                JobOfferIndexCandidateView jobOfferIndexCandidateView = new JobOfferIndexCandidateView();
-                jobOfferIndexCandidateView.Offers = searchResult;
-                Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-                jobOfferIndexCandidateView.Candidate = us;
-                return View("IndexCandidate", jobOfferIndexCandidateView);
+                return View("IndexCandidate", searchResult);
             }
             //role == Role.ADMIN
             return View("IndexAdmin", searchResult);
@@ -156,14 +152,15 @@ namespace MainApp.Controllers
         public async Task<ActionResult> Create(JobOffer model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
-            if (role == Role.CANDIDATE)
+            if (role != Role.HR)
                 return new UnauthorizedResult();
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            //TODO: do we have to create a new JobOffer?
+            string email = AuthorizationTools.GetEmail(User);
+            HR us = _context.HRs.Where(h => h.EmailAddress == email).First();
             JobOffer jo = new JobOffer
             {
                 Description = model.Description,
@@ -172,7 +169,8 @@ namespace MainApp.Controllers
                 SalaryFrom = model.SalaryFrom,
                 SalaryTo = model.SalaryTo,
                 ValidUntil = model.ValidUntil,
-                Created = DateTime.Now
+                Created = DateTime.Now,
+                HR = us
             };
 
             await _context.JobOffers.AddAsync(jo);
