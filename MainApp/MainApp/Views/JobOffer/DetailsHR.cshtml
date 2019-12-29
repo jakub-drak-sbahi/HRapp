@@ -25,7 +25,7 @@
                 <div class="content">@Model.Offer.Description</div>
 
                 <label>Company:</label>
-                <div class="content">@Model.Offer.Company.Name</div>
+                <div class="content">@Model.Offer.HR.Company.Name</div>
 
                 <label>Location:</label>
                 <div class="content">@Model.Offer.Location</div>
@@ -33,24 +33,24 @@
                 @if (Model.Offer.SalaryFrom.HasValue)
                 {
                     <label>Salary from:</label>
-                    <div class="content">@Model.SalaryFrom  (PLN)</div>
+                    <div class="content">@Model.Offer.SalaryFrom  (PLN)</div>
                 }
 
                 @if (Model.Offer.SalaryTo.HasValue)
                 {
                     <label>Salary to:</label>
-                    <div class="content">@Model.SalaryTo</div>
+                    <div class="content">@Model.Offer.SalaryTo</div>
                 }
 
                 <label>Created:</label>
-                <div class="content">@Model.Created</div>
+                <div class="content">@Model.Offer.Created</div>
 
                 @if (Model.Offer.ValidUntil.HasValue)
                 {
                     <div>
                         <label>Valid:</label>
                         <div class="content">
-                            @Model.Offer.ValidUntil.Value.Subtract(DateTime.Now).Days days (@Model.ValidUntil)
+                            @Model.Offer.ValidUntil.Value.Subtract(DateTime.Now).Days days (@Model.Offer.ValidUntil)
                         </div>
                     </div>
                 }
@@ -85,7 +85,7 @@
                         </tbody>
                     </table>
                     <div class="pt-4">
-                        <a asp-action="Edit" asp-route-id="@Model.Id">
+                        <a asp-action="Edit" asp-route-id="@Model.Offer.Id">
                             <button class="btn btn-rounded btn-primary mx-2">
                                 <i class="fa fa-edit pr-2"></i>
                                 Edit
@@ -125,7 +125,7 @@
                     <i class="fa fa-chevron-left pr-2" ></i>
                     Cancel
                 </button>
-                @using (Html.BeginForm("Delete", "JobOffer", new { Model.Id }, FormMethod.Post, null, new { style = "display:inline;" }))
+                @using (Html.BeginForm("Delete", "JobOffer", new { Model.Offer.Id }, FormMethod.Post, null, new { style = "display:inline;" }))
                 {
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-rounded btn-danger">

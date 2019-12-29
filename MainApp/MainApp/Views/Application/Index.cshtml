@@ -58,8 +58,8 @@
                 @foreach (var app in Model.OrderBy(a => a.OfferId))
                 {
                     <tr>
-                        <td>@app.OfferId</td>
-                        <td>"need to change app model to get company"</td>
+                        <td>@Html.ActionLink(app.JobOffer.JobTitle, "Details", "JobOffer", new { id = app.JobOffer.Id }, null)</td>
+                        <td>@app.JobOffer.HR.Company.Name</td>
                         <td>@Html.ActionLink(app.FirstName, "Details", new { id = app.Id })</td>
                         <td>@Html.ActionLink(app.LastName, "Details", new { id = app.Id })</td>
                         <td>@app.PhoneNumber</td>
