@@ -43,13 +43,36 @@ namespace MainApp.Controllers
                     .Where(o => o.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                     .ToListAsync();
             }
-
+            if(role==Role.HR)
+            {
+                string email = AuthorizationTools.GetEmail(User);
+                HR us = _context.HRs.Where(h => h.EmailAddress == email).First();
+                searchResult = searchResult.Where(a => a.JobOffer.HR == us).ToList();
+            }
+            else if(role==Role.CANDIDATE)
+            {
+                string email = AuthorizationTools.GetEmail(User);
+                Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
+                searchResult = searchResult.Where(a => a.Candidate == us).ToList();
+            }
             return View(searchResult);
         }
 
         public async Task<ActionResult> Create(int id)
         {
-            var model = new Application() { OfferId = id };
+            if (await AuthorizationTools.IsCandidate(User, _context) == false)
+                return new UnauthorizedResult();
+            JobOffer offer = _context.JobOffers.Where(o => o.Id == id).First();
+            string email = AuthorizationTools.GetEmail(User);
+            Candidate candidate = _context.Candidates.Where(c => c.EmailAddress == email).First();
+            var model = new Application()
+            {
+                CvUrl = "TODO",
+                EmailAddress = email,
+                JobOffer = offer,
+                Candidate = candidate,
+                OfferId = id
+            };
             return View(model);
         }
 
@@ -58,10 +81,20 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Create(Application model, int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
+            if (await AuthorizationTools.IsCandidate(User, _context) == false)
+                return new UnauthorizedResult();
+            JobOffer offer = _context.JobOffers.Where(o => o.Id == id).First();
+            string email = AuthorizationTools.GetEmail(User);
+            Candidate candidate = _context.Candidates.Where(c => c.EmailAddress == email).First();
+            model.JobOffer = offer;
+            model.Candidate = candidate;
+            model.OfferId = offer.Id;
+            model.CvUrl = "TODO";
+
+            //if (!ModelState.IsValid)
+            //{
+            //    return View();
+            //}
 
             Application application = new Application
             {
@@ -71,7 +104,9 @@ namespace MainApp.Controllers
                 PhoneNumber = model.PhoneNumber,
                 EmailAddress = model.EmailAddress,
                 ContactAgreement = model.ContactAgreement,
-                CvUrl = model.CvUrl
+                CvUrl = model.CvUrl,
+                Candidate = model.Candidate,
+                JobOffer = model.JobOffer
             };
 
             await _context.JobApplications.AddAsync(application);
