@@ -56,7 +56,11 @@ namespace MainApp.Controllers
             }
             else if (role == Role.CANDIDATE)
             {
-                return View("IndexCandidate", searchResult);
+                JobOfferIndexCandidateView jobOfferIndexCandidateView = new JobOfferIndexCandidateView();
+                jobOfferIndexCandidateView.Offers = searchResult;
+                Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
+                jobOfferIndexCandidateView.Candidate = us;
+                return View("IndexCandidate", jobOfferIndexCandidateView);
             }
             //role == Role.ADMIN
             return View("IndexAdmin", searchResult);
