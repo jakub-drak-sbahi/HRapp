@@ -116,7 +116,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Create(HRCreateView model)
         {
-            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             if (!ModelState.IsValid)
             {
@@ -139,18 +141,19 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int id)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             string email = AuthorizationTools.GetEmail(User);
             HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id))
+            if (role != Role.ADMIN && (us == null || us.Id != id))
                 return new UnauthorizedResult();
 
-            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
             var hr = await _context.HRs
                 .Include(x => x.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if(role == Role.ADMIN)
+            if (role == Role.ADMIN)
                 return View("DetailsAdmin", hr);
             return View("DetailsHR", hr);
         }

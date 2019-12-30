@@ -26,6 +26,7 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             List<JobOffer> searchResult;
             if (string.IsNullOrEmpty(searchString))
             {
@@ -68,6 +69,7 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
             if (id == null)
@@ -96,6 +98,7 @@ namespace MainApp.Controllers
         public async Task<ActionResult> Edit(JobOffer model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
 
@@ -124,6 +127,7 @@ namespace MainApp.Controllers
         public async Task<ActionResult> Delete(int? id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
 
@@ -156,14 +160,16 @@ namespace MainApp.Controllers
         public async Task<ActionResult> Create(JobOffer model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
-            if (role == Role.CANDIDATE)
+            ViewData.Add("role", role);
+            if (role != Role.HR)
                 return new UnauthorizedResult();
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            //TODO: do we have to create a new JobOffer?
+            string email = AuthorizationTools.GetEmail(User);
+            HR us = _context.HRs.Where(h => h.EmailAddress == email).First();
             JobOffer jo = new JobOffer
             {
                 Description = model.Description,
@@ -172,7 +178,8 @@ namespace MainApp.Controllers
                 SalaryFrom = model.SalaryFrom,
                 SalaryTo = model.SalaryTo,
                 ValidUntil = model.ValidUntil,
-                Created = DateTime.Now
+                Created = DateTime.Now,
+                HR = us
             };
 
             await _context.JobOffers.AddAsync(jo);
@@ -188,6 +195,7 @@ namespace MainApp.Controllers
                 .Include(x => x.HR.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role == Role.HR)
             {
                 JobOfferDetailsHRView jobOfferDetailsHRView = new JobOfferDetailsHRView();
