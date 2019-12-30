@@ -8,7 +8,6 @@ using MainApp.Models;
 using MainApp.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using MainApp.Authorization;
-using Microsoft.AspNetCore.Authorization;
 
 namespace MainApp.Controllers
 {
@@ -22,22 +21,19 @@ namespace MainApp.Controllers
             Console.WriteLine("HomeController: " + _context.JobOffers.Count());
         }
 
-        [Authorize]
-        public async Task<IActionResult> Index()
-        {
-            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
-            ViewData.Add("role", role);
+        public IActionResult Index()
+        {            
+            ViewData.Add("role", Role.CANDIDATE);
             return View();
         }
 
 
         [Route("Home/about")]
-        [Authorize]
-		public async Task<IActionResult> About()
+
+		public IActionResult About()
 		{
 			ViewData["Message"] = "Your application description page.";
-            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
-            ViewData.Add("role", role);
+            ViewData.Add("role", Role.CANDIDATE);
             return View();
  
 		}
@@ -45,21 +41,20 @@ namespace MainApp.Controllers
 		public IActionResult Contact()
 		{
 			ViewData["Message"] = "Your contact page.";
-
-			return View();
+            ViewData.Add("role", Role.CANDIDATE);
+            return View();
 		}
 
-        [Authorize]
-        public async Task<IActionResult> Privacy()
+        public IActionResult Privacy()
         {
-            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
-            ViewData.Add("role", role);
+            ViewData.Add("role", Role.CANDIDATE);
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            ViewData.Add("role", Role.CANDIDATE);
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 

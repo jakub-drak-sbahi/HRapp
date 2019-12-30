@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MainApp.Authorization;
 using MainApp.EntityFramework;
 using MainApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,9 +23,11 @@ namespace MainApp.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
-            Role role = Role.HR;
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             List<Company> searchResult;
 
             if (string.IsNullOrEmpty(searchString))
@@ -42,9 +45,14 @@ namespace MainApp.Controllers
             return View("IndexHRAndCandidate", searchResult);
         }
 
+        [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
-            if(id==null)
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
+                return new UnauthorizedResult();
+            if (id==null)
             {
                 return NotFound();
             }
@@ -58,8 +66,13 @@ namespace MainApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
+                return new UnauthorizedResult();
             Company company = _context.Companies.Find(id);
             if(company==null)
             {
@@ -70,23 +83,38 @@ namespace MainApp.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Create()
+        [Authorize]
+        public async Task<ActionResult> Create()
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
+                return new UnauthorizedResult();
             return View();
         }
 
         [HttpPost, ActionName("Create")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> CreateConfirmed(Company company)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
+                return new UnauthorizedResult();
             await _context.Companies.AddAsync(company);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<ActionResult> Edit(int? id)
         {
-            if(id==null)
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
+                return new UnauthorizedResult();
+            if (id==null)
             {
                 return NotFound();
             }
@@ -100,15 +128,24 @@ namespace MainApp.Controllers
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> EditConfirmed(Company company)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
+                return new UnauthorizedResult();
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index"); 
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
+                return new UnauthorizedResult();
             var model = _context.Companies.Find(id);
             return View("Details", model);
         }
