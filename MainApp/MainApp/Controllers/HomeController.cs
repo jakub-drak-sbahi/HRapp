@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using MainApp.Models;
 using MainApp.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using MainApp.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MainApp.Controllers
 {
@@ -20,19 +22,23 @@ namespace MainApp.Controllers
             Console.WriteLine("HomeController: " + _context.JobOffers.Count());
         }
 
-        public IActionResult Index()
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             return View();
         }
 
 
         [Route("Home/about")]
-
-		public IActionResult About()
+        [Authorize]
+		public async Task<IActionResult> About()
 		{
 			ViewData["Message"] = "Your application description page.";
-
-			return View();
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            return View();
  
 		}
 
@@ -43,8 +49,11 @@ namespace MainApp.Controllers
 			return View();
 		}
 
-        public IActionResult Privacy()
+        [Authorize]
+        public async Task<IActionResult> Privacy()
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             return View();
         }
 

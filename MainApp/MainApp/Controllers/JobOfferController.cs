@@ -26,6 +26,7 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             List<JobOffer> searchResult;
             if (string.IsNullOrEmpty(searchString))
             {
@@ -64,6 +65,7 @@ namespace MainApp.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
             if (id == null)
@@ -92,6 +94,7 @@ namespace MainApp.Controllers
         public async Task<ActionResult> Edit(JobOffer model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
 
@@ -120,6 +123,7 @@ namespace MainApp.Controllers
         public async Task<ActionResult> Delete(int? id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
 
@@ -152,6 +156,7 @@ namespace MainApp.Controllers
         public async Task<ActionResult> Create(JobOffer model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role != Role.HR)
                 return new UnauthorizedResult();
 
@@ -186,6 +191,7 @@ namespace MainApp.Controllers
                 .Include(x => x.HR.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             if (role == Role.HR)
             {
                 JobOfferDetailsHRView jobOfferDetailsHRView = new JobOfferDetailsHRView();
