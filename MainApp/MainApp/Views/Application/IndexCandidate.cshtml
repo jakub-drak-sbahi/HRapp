@@ -49,21 +49,33 @@
                     <th scope="col">First name</th>
                     <th scope="col">Last name</th>
                     <th scope="col">Phone number</th>
-                    <th scope="col">Email adress</th>
+                    <th scope="col">Email</th>
                     <th scope="col">Contact agreement</th>
+                    <th scope="col">State</th>
                     <th style="width: 20px"></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var app in Model.OrderBy(a => a.OfferId))
                 {
-                    <tr>
-                        <td>@Html.ActionLink(app.JobOffer.JobTitle, "Details", "JobOffer", new { id = app.JobOffer.Id }, null)</td>
-                        <td>@app.JobOffer.HR.Company.Name</td>
-                        <td>@Html.ActionLink(app.FirstName, "Details", new { id = app.Id })</td>
-                        <td>@Html.ActionLink(app.LastName, "Details", new { id = app.Id })</td>
-                        <td>@app.PhoneNumber</td>
-                        <td>@app.EmailAddress</td>
+                <tr>
+                    <td>@Html.ActionLink(app.JobOffer.JobTitle, "Details", "JobOffer", new { id = app.JobOffer.Id }, null)</td>
+                    <td>@app.JobOffer.HR.Company.Name</td>
+                    <td>@Html.ActionLink(app.FirstName, "Details", new { id = app.Id })</td>
+                    <td>@Html.ActionLink(app.LastName, "Details", new { id = app.Id })</td>
+                    <td>@app.PhoneNumber</td>
+                    <td>@app.EmailAddress</td>
+                    @if (app.ContactAgreement)
+                    {
+                        <td>Yes</td>
+                    }
+                    else
+                    {
+                        <td>No</td>
+                    }
+                    <td>@app.State</td>
+                    @if (app.State == "Pending")
+                    {
                         <td>
                             <a href="@Url.Action("Edit", "Application", new { id = app.Id })"
                                class="text-primary">
@@ -71,7 +83,8 @@
                                    title="Edit"></i>
                             </a>
                         </td>
-                    </tr>
+                    }
+                </tr>
                 }
 
             </tbody>

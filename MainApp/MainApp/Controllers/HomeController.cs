@@ -18,7 +18,6 @@ namespace MainApp.Controllers
         public HomeController(DataContext context)
         {
             _context = context;
-            Console.WriteLine("HomeController: " + _context.JobOffers.Count());
         }
 
         public IActionResult Index()
@@ -117,7 +116,7 @@ namespace MainApp.Controllers
             });
             _context.Candidates.Add(new Candidate() {
 
-                FirstName = "Slawoj",
+                FirstName = "Grzegorz",
                 LastName = "Zizek",
                 EmailAddress = "zlazoj@protonmail.com",
                 PhoneNumber = "736482963"
@@ -266,7 +265,8 @@ namespace MainApp.Controllers
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
                 JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Pirate recruiter" && x.HR.Company.Name == "Binbows"),
-                CvUrl = "www.google.com"
+                CvUrl = "www.google.com",
+                State = "Rejected"
             });
             _context.JobApplications.Add(new Application()
             {
@@ -277,7 +277,8 @@ namespace MainApp.Controllers
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.LastName == "Lwie Serce"),
                 JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Pirate recruiter" && x.HR.Company.Name == "Binbows"),
-                CvUrl = "www.google.com"
+                CvUrl = "www.google.com",
+                State = "Pending"
             });
             _context.JobApplications.Add(new Application()
             {
@@ -288,7 +289,8 @@ namespace MainApp.Controllers
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
                 JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Younger assisstant" && x.HR.Company.Name == "Dolce&Banana"),
-                CvUrl = "www.google.com"
+                CvUrl = "www.google.com",
+                State = "Pending"
             });
             _context.JobApplications.Add(new Application()
             {
@@ -299,7 +301,8 @@ namespace MainApp.Controllers
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
                 JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Package manager" && x.HR.Company.Name == "Sunbucks coffee"),
-                CvUrl = "www.google.com"
+                CvUrl = "www.google.com",
+                State = "Pending"
             });
             _context.SaveChanges();
             return View("Index");
