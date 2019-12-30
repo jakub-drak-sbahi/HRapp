@@ -117,6 +117,10 @@ namespace MainApp.Controllers
             }
             offer.JobTitle = model.JobTitle;
             offer.Description = model.Description;
+            offer.Location = model.Location;
+            offer.SalaryFrom = model.SalaryFrom;
+            offer.SalaryTo = model.SalaryTo;
+            offer.ValidUntil = model.ValidUntil;
             _context.Update(offer);
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", new { id = model.Id });
@@ -150,6 +154,10 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Create()
         {
+                        Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.HR)
+                return new UnauthorizedResult();
             var model = new JobOffer();
             return View(model);
         }
