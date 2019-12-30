@@ -24,7 +24,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
-            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             if (string.IsNullOrEmpty(searchString))
                 return View(await _context.Candidates.ToListAsync());
@@ -39,9 +41,11 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id.Value))
+            if (role != Role.ADMIN && (us == null || us.Id != id.Value))
                 return new UnauthorizedResult();
 
             if (id == null)
@@ -62,9 +66,11 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Edit(Candidate model)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != model.Id))
+            if (role != Role.ADMIN && (us == null || us.Id != model.Id))
                 return new UnauthorizedResult();
 
             if (!ModelState.IsValid)
@@ -86,7 +92,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
-            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             if (id == null)
             {
@@ -102,12 +110,13 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int id)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id))
+            if (role != Role.ADMIN && (us == null || us.Id != id))
                 return new UnauthorizedResult();
 
-            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             var candidate = await _context.Candidates
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (role == Role.ADMIN)

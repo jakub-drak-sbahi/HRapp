@@ -1,4 +1,4 @@
-﻿@model IEnumerable<JobOffer>
+﻿@model JobOfferIndexCandidateView
 
 
 <div class="row page-box">
@@ -11,7 +11,7 @@
                     </h3>
                     <div>
                         <span class="badge badge-pill badge-primary align-top" >
-                            @Model.Count()
+                            @Model.Offers.Count()
                         </span>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var offer in Model.OrderBy(o => o.Created))
+                @foreach (var offer in Model.Offers.OrderBy(o => o.Created))
                 {
                     <tr>
                         <td>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MainApp.Models;
 using MainApp.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using MainApp.Authorization;
 
 namespace MainApp.Controllers
 {
@@ -21,7 +22,8 @@ namespace MainApp.Controllers
         }
 
         public IActionResult Index()
-        {
+        {            
+            ViewData.Add("role", Role.CANDIDATE);
             return View();
         }
 
@@ -31,26 +33,28 @@ namespace MainApp.Controllers
 		public IActionResult About()
 		{
 			ViewData["Message"] = "Your application description page.";
-
-			return View();
+            ViewData.Add("role", Role.CANDIDATE);
+            return View();
  
 		}
 
 		public IActionResult Contact()
 		{
 			ViewData["Message"] = "Your contact page.";
-
-			return View();
+            ViewData.Add("role", Role.CANDIDATE);
+            return View();
 		}
 
         public IActionResult Privacy()
         {
+            ViewData.Add("role", Role.CANDIDATE);
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            ViewData.Add("role", Role.CANDIDATE);
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
