@@ -27,6 +27,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             List<JobOffer> searchResult;
             if (string.IsNullOrEmpty(searchString))
             {
@@ -70,6 +71,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
             if (id == null)
@@ -99,6 +101,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
 
@@ -132,6 +135,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
 
@@ -154,8 +158,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Create()
         {
-                        Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.HR)
                 return new UnauthorizedResult();
             var model = new JobOffer();
@@ -169,6 +174,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.HR)
                 return new UnauthorizedResult();
 
@@ -204,6 +210,7 @@ namespace MainApp.Controllers
                 .FirstOrDefaultAsync(x => x.Id == id);
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role == Role.HR)
             {
                 JobOfferDetailsHRView jobOfferDetailsHRView = new JobOfferDetailsHRView();

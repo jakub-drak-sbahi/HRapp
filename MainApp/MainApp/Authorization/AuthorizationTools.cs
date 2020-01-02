@@ -13,7 +13,28 @@ namespace MainApp.Authorization
     {
         public static string GetEmail(ClaimsPrincipal User)
         {
-            return User.Claims.ToList()[1].Value;
+            return User.Claims.ToList()[3].Value;
+        }
+
+        public static int GetUserDbId(ClaimsPrincipal User, DataContext context, Role role)
+        {
+            int id = 0;
+            string email = GetEmail(User);
+            switch (role)
+            {
+                case Role.CANDIDATE:
+                    id = context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault().Id;
+                    break;
+                case Role.HR:
+                    id = context.HRs.Where(c => c.EmailAddress == email).FirstOrDefault().Id;
+                    break;
+                case Role.ADMIN:
+                    id = context.Admins.Where(c => c.EmailAddress == email).FirstOrDefault().Id;
+                    break;
+                default:
+                    break;
+            }
+            return id;
         }
 
         public static async Task<Role> GetRoleAsync(ClaimsPrincipal User, DataContext context)
