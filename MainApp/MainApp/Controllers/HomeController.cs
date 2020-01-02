@@ -135,6 +135,13 @@ namespace MainApp.Controllers
                 EmailAddress = "batman@gotham.com",
                 PhoneNumber = "367473783"
             });
+            _context.Candidates.Add(new Candidate() {
+
+                FirstName = "Slavoj",
+                LastName = "Zizek",
+                EmailAddress = "zlazoj@spoko.pl",
+                PhoneNumber = "74638368"
+            });
             _context.SaveChanges();
             _context.Companies.Add(new Company() {
                 Name = "Abibas"

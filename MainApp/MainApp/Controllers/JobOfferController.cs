@@ -211,7 +211,7 @@ namespace MainApp.Controllers
                 string email = AuthorizationTools.GetEmail(User);
                 HR us = _context.HRs.Where(h => h.EmailAddress == email).First();
                 jobOfferDetailsHRView.HR = us;
-                jobOfferDetailsHRView.Applications = await _context.JobApplications.Where(ja => ja.JobOffer.HR == us).ToListAsync();
+                jobOfferDetailsHRView.Applications = await _context.JobApplications.Where(ja => ja.JobOffer == offer).ToListAsync();
                 return View("DetailsHR", jobOfferDetailsHRView);
             }
             if (role == Role.ADMIN)
