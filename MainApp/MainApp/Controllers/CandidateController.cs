@@ -113,7 +113,7 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             string email = AuthorizationTools.GetEmail(User);
-            Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
+            Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault();
             if (role != Role.ADMIN && (us == null || us.Id != id))
                 return new UnauthorizedResult();
 

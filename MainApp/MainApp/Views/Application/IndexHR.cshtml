@@ -58,23 +58,30 @@
             <tbody>
                 @foreach (var app in Model.OrderBy(a => a.OfferId))
                 {
-                    <tr>
-                        <td>@Html.ActionLink(app.JobOffer.JobTitle, "Details", "JobOffer", new { id = app.JobOffer.Id }, null)</td>
-                        <td>@app.JobOffer.HR.Company.Name</td>
-                        <td>@Html.ActionLink(app.FirstName, "Details", new { id = app.Id })</td>
-                        <td>@Html.ActionLink(app.LastName, "Details", new { id = app.Id })</td>
-                        <td>@app.PhoneNumber</td>
-                        <td>@app.EmailAddress</td>
-                        @if (app.ContactAgreement)
-                        {
-                            <td>Yes</td>
-                        }
-                        else
-                        {
-                            <td>No</td>
-                        }
-                        <td>@app.State</td>
-                    </tr>
+                <tr>
+                    <td>@Html.ActionLink(app.JobOffer.JobTitle, "Details", "JobOffer", new { id = app.JobOffer.Id }, null)</td>
+                    <td>@app.JobOffer.HR.Company.Name</td>
+                    <td>@Html.ActionLink(app.FirstName, "Details", new { id = app.Id })</td>
+                    <td>@Html.ActionLink(app.LastName, "Details", new { id = app.Id })</td>
+                    <td>@app.PhoneNumber</td>
+                    <td>@app.EmailAddress</td>
+                    @if (app.ContactAgreement)
+                    {
+                        <td>Yes</td>
+                    }
+                    else
+                    {
+                        <td>No</td>
+                    }
+                    <td>@app.State</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Application", new { id = app.Id })"
+                           class="text-primary">
+                            <i class="fa fa-eye"
+                               title="View details"></i>
+                        </a>
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>

@@ -209,6 +209,13 @@ namespace MainApp.Controllers
                 EmailAddress = "janette.podsiadlo@gmail.com",
                 Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Binbows")
             });
+            _context.HRs.Add(new HR()
+            {
+                FirstName = "Katarzyna",
+                LastName = "Testowa",
+                EmailAddress = "katarzyna.testowa@spoko.pl",
+                Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Abibas")
+            });
             _context.SaveChanges();
             _context.JobOffers.Add(new JobOffer()
             {
@@ -250,6 +257,24 @@ namespace MainApp.Controllers
             {
                 JobTitle = "Younger chief executor",
                 HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Kurka"),
+                Created = DateTime.Now,
+                Description = "Hempen halter boom bounty hornswaggle fore ballast Sink me hearties ye blow the man down." +
+                " League topsail Blimey trysail yo-ho-ho rutters yawl scuttle dance the hempen jig Brethren of the Coast." +
+                " Warp measured fer yer chains six pounders rope's end lugger Pieces of Eight killick black spot hempen halter man-of-war."
+            });
+            _context.JobOffers.Add(new JobOffer()
+            {
+                JobTitle = "Younger chief executor",
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Testowa"),
+                Created = DateTime.Now,
+                Description = "Hempen halter boom bounty hornswaggle fore ballast Sink me hearties ye blow the man down." +
+                " League topsail Blimey trysail yo-ho-ho rutters yawl scuttle dance the hempen jig Brethren of the Coast." +
+                " Warp measured fer yer chains six pounders rope's end lugger Pieces of Eight killick black spot hempen halter man-of-war."
+            });
+            _context.JobOffers.Add(new JobOffer()
+            {
+                JobTitle = "Butterfly Collector",
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Testowa"),
                 Created = DateTime.Now,
                 Description = "Hempen halter boom bounty hornswaggle fore ballast Sink me hearties ye blow the man down." +
                 " League topsail Blimey trysail yo-ho-ho rutters yawl scuttle dance the hempen jig Brethren of the Coast." +
@@ -300,7 +325,19 @@ namespace MainApp.Controllers
                 PhoneNumber = "2377746467",
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
-                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Package manager" && x.HR.Company.Name == "Sunbucks coffee"),
+                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Butterfly Collector" && x.HR.Company.Name == "Abibas"),
+                CvUrl = "www.google.com",
+                State = "Pending"
+            });
+            _context.JobApplications.Add(new Application()
+            {
+                FirstName = "Slavoj",
+                LastName = "Zizek",
+                EmailAddress = "zlazoj@spoko.pl",
+                PhoneNumber = "23456764",
+                ContactAgreement = true,
+                Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "zlazoj@spoko.pl"),
+                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Younger chief executor" && x.HR.Company.Name == "Abibas"),
                 CvUrl = "www.google.com",
                 State = "Pending"
             });

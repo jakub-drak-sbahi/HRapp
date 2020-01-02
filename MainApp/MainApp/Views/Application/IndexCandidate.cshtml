@@ -53,6 +53,7 @@
                     <th scope="col">Contact agreement</th>
                     <th scope="col">State</th>
                     <th style="width: 20px"></th>
+                    <th style="width: 20px"></th>
                 </tr>
             </thead>
             <tbody>
@@ -74,6 +75,13 @@
                         <td>No</td>
                     }
                     <td>@app.State</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Application", new { id = app.Id })"
+                           class="text-primary">
+                            <i class="fa fa-eye"
+                               title="View details"></i>
+                        </a>
+                    </td>
                     @if (app.State == "Pending")
                     {
                         <td>
