@@ -61,6 +61,7 @@ namespace MainApp.Controllers
             return View("IndexAdmin", searchResult);
         }
 
+        [Authorize]
         public async Task<ActionResult> Create(int id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
