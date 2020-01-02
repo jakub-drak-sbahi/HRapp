@@ -20,9 +20,18 @@ namespace MainApp.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
-        {            
-            ViewData.Add("role", Role.CANDIDATE);
+        public async Task<IActionResult> Index()
+        {   
+            if(User.Identity.IsAuthenticated)
+            {
+                Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+                ViewData.Add("role", role);
+            }
+            else
+            {
+                ViewData.Add("role", Role.CANDIDATE);
+            }
+
             return View();
         }
 
