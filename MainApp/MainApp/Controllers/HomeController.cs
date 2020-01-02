@@ -26,6 +26,7 @@ namespace MainApp.Controllers
             {
                 Role role = await AuthorizationTools.GetRoleAsync(User, _context);
                 ViewData.Add("role", role);
+                ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             }
             else
             {
