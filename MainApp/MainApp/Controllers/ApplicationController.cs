@@ -167,5 +167,159 @@ namespace MainApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", new { id = model.Id });
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Details(int id)
+        {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            string email = AuthorizationTools.GetEmail(User);
+
+            if (role == Role.ADMIN)
+                return new UnauthorizedResult();
+
+            Application app = _context.JobApplications
+                .Include(x => x.JobOffer)
+                .Include(x => x.Candidate)
+                .Include(x => x.JobOffer.HR)
+                .Include(x => x.JobOffer.HR.Company)
+                .Where(a => a.Id == id)
+                .FirstOrDefault();
+            if (app == null)
+                return new NotFoundResult();
+
+            if(role == Role.HR)
+            {
+                HR us = _context.HRs.Where(c => c.EmailAddress == email).FirstOrDefault();
+                if (us == null || us.Id != app.JobOffer.HR.Id)
+                    return new UnauthorizedResult();
+                return View("DetailsHR", app);
+            }
+            else
+            {
+                Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault();
+                if (us == null || us.Id != app.Candidate.Id)
+                    return new UnauthorizedResult();
+
+                return View("DetailsCandidate", app);
+            }
+        }
+
+        [HttpPost, ActionName("Accept")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> AcceptConfirmed(int id)
+        {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            string email = AuthorizationTools.GetEmail(User);
+            if (role != Role.HR)
+                return new UnauthorizedResult();
+            Application app = _context.JobApplications
+                .Include(x => x.JobOffer)
+                .Include(x => x.Candidate)
+                .Include(x => x.JobOffer.HR)
+                .Include(x => x.JobOffer.HR.Company)
+                .Where(a => a.Id == id)
+                .FirstOrDefault();
+            if (app == null)
+            {
+                return NotFound();
+            }
+            HR us = _context.HRs.Where(c => c.EmailAddress == email).FirstOrDefault();
+            if (us == null || app.State != "Pending" || us.Id != app.JobOffer.HR.Id)
+                return new UnauthorizedResult();
+            app.State = "Accepted";
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost, ActionName("Reject")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> RejectConfirmed(int id)
+        {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            string email = AuthorizationTools.GetEmail(User);
+            if (role != Role.HR)
+                return new UnauthorizedResult();
+            Application app = _context.JobApplications
+                .Include(x => x.JobOffer)
+                .Include(x => x.Candidate)
+                .Include(x => x.JobOffer.HR)
+                .Include(x => x.JobOffer.HR.Company)
+                .Where(a => a.Id == id)
+                .FirstOrDefault();
+            if (app == null)
+            {
+                return NotFound();
+            }
+            HR us = _context.HRs.Where(c => c.EmailAddress == email).FirstOrDefault();
+            if (us == null || app.State != "Pending" || us.Id != app.JobOffer.HR.Id)
+                return new UnauthorizedResult();
+            app.State = "Rejected";
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        public async Task<ActionResult> Delete(int? id)
+        {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            string email = AuthorizationTools.GetEmail(User);
+            if (role != Role.CANDIDATE)
+                return new UnauthorizedResult();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            Application app = _context.JobApplications
+                .Include(x => x.JobOffer)
+                .Include(x => x.Candidate)
+                .Include(x => x.JobOffer.HR)
+                .Include(x => x.JobOffer.HR.Company)
+                .Where(a => a.Id == id)
+                .FirstOrDefault();
+            if (app == null)
+            {
+                return NotFound();
+            }
+            Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault();
+            if (us == null || app.State != "Pending" || us.Id != app.Candidate.Id)
+                return new UnauthorizedResult();
+            return View(app);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            string email = AuthorizationTools.GetEmail(User);
+            if (role != Role.CANDIDATE)
+                return new UnauthorizedResult();
+            Application app = _context.JobApplications
+                .Include(x => x.JobOffer)
+                .Include(x => x.Candidate)
+                .Include(x => x.JobOffer.HR)
+                .Include(x => x.JobOffer.HR.Company)
+                .Where(a => a.Id == id)
+                .FirstOrDefault();
+            if (app == null)
+            {
+                return NotFound();
+            }
+            Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault();
+            if (us == null || app.State != "Pending" || us.Id != app.Candidate.Id)
+                return new UnauthorizedResult();
+            _context.JobApplications.Remove(app);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
     }
 }
