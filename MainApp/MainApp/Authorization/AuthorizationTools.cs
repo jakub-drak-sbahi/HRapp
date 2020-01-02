@@ -28,7 +28,7 @@ namespace MainApp.Authorization
             var candidate = await context.Candidates.Where(c => c.EmailAddress == email).ToListAsync();
             if (candidate.Count() == 0)
             {
-                await context.Candidates.AddAsync(new Models.Candidate() { EmailAddress = email });
+                await context.Candidates.AddAsync(new Models.Candidate() { EmailAddress = email, FirstName = "New", LastName = "User", PhoneNumber = "None" });
                 await context.SaveChangesAsync();
             }
             return Role.CANDIDATE;

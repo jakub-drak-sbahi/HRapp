@@ -18,7 +18,6 @@ namespace MainApp.Controllers
         public HomeController(DataContext context)
         {
             _context = context;
-            Console.WriteLine("HomeController: " + _context.JobOffers.Count());
         }
 
         public IActionResult Index()
@@ -117,7 +116,7 @@ namespace MainApp.Controllers
             });
             _context.Candidates.Add(new Candidate() {
 
-                FirstName = "Slawoj",
+                FirstName = "Grzegorz",
                 LastName = "Zizek",
                 EmailAddress = "zlazoj@protonmail.com",
                 PhoneNumber = "736482963"
@@ -135,6 +134,13 @@ namespace MainApp.Controllers
                 LastName = "Wayne",
                 EmailAddress = "batman@gotham.com",
                 PhoneNumber = "367473783"
+            });
+            _context.Candidates.Add(new Candidate() {
+
+                FirstName = "Slavoj",
+                LastName = "Zizek",
+                EmailAddress = "zlazoj@spoko.pl",
+                PhoneNumber = "74638368"
             });
             _context.SaveChanges();
             _context.Companies.Add(new Company() {
@@ -210,6 +216,13 @@ namespace MainApp.Controllers
                 EmailAddress = "janette.podsiadlo@gmail.com",
                 Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Binbows")
             });
+            _context.HRs.Add(new HR()
+            {
+                FirstName = "Katarzyna",
+                LastName = "Testowa",
+                EmailAddress = "katarzyna.testowa@spoko.pl",
+                Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Abibas")
+            });
             _context.SaveChanges();
             _context.JobOffers.Add(new JobOffer()
             {
@@ -256,6 +269,24 @@ namespace MainApp.Controllers
                 " League topsail Blimey trysail yo-ho-ho rutters yawl scuttle dance the hempen jig Brethren of the Coast." +
                 " Warp measured fer yer chains six pounders rope's end lugger Pieces of Eight killick black spot hempen halter man-of-war."
             });
+            _context.JobOffers.Add(new JobOffer()
+            {
+                JobTitle = "Younger chief executor",
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Testowa"),
+                Created = DateTime.Now,
+                Description = "Hempen halter boom bounty hornswaggle fore ballast Sink me hearties ye blow the man down." +
+                " League topsail Blimey trysail yo-ho-ho rutters yawl scuttle dance the hempen jig Brethren of the Coast." +
+                " Warp measured fer yer chains six pounders rope's end lugger Pieces of Eight killick black spot hempen halter man-of-war."
+            });
+            _context.JobOffers.Add(new JobOffer()
+            {
+                JobTitle = "Butterfly Collector",
+                HR = await _context.HRs.FirstOrDefaultAsync(x => x.LastName == "Testowa"),
+                Created = DateTime.Now,
+                Description = "Hempen halter boom bounty hornswaggle fore ballast Sink me hearties ye blow the man down." +
+                " League topsail Blimey trysail yo-ho-ho rutters yawl scuttle dance the hempen jig Brethren of the Coast." +
+                " Warp measured fer yer chains six pounders rope's end lugger Pieces of Eight killick black spot hempen halter man-of-war."
+            });
             _context.SaveChanges();
             _context.JobApplications.Add(new Application()
             {
@@ -266,7 +297,8 @@ namespace MainApp.Controllers
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
                 JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Pirate recruiter" && x.HR.Company.Name == "Binbows"),
-                CvUrl = "www.google.com"
+                CvUrl = "www.google.com",
+                State = "Rejected"
             });
             _context.JobApplications.Add(new Application()
             {
@@ -277,7 +309,8 @@ namespace MainApp.Controllers
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.LastName == "Lwie Serce"),
                 JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Pirate recruiter" && x.HR.Company.Name == "Binbows"),
-                CvUrl = "www.google.com"
+                CvUrl = "www.google.com",
+                State = "Pending"
             });
             _context.JobApplications.Add(new Application()
             {
@@ -288,7 +321,8 @@ namespace MainApp.Controllers
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
                 JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Younger assisstant" && x.HR.Company.Name == "Dolce&Banana"),
-                CvUrl = "www.google.com"
+                CvUrl = "www.google.com",
+                State = "Pending"
             });
             _context.JobApplications.Add(new Application()
             {
@@ -298,8 +332,21 @@ namespace MainApp.Controllers
                 PhoneNumber = "2377746467",
                 ContactAgreement = true,
                 Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
-                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Package manager" && x.HR.Company.Name == "Sunbucks coffee"),
-                CvUrl = "www.google.com"
+                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Butterfly Collector" && x.HR.Company.Name == "Abibas"),
+                CvUrl = "www.google.com",
+                State = "Pending"
+            });
+            _context.JobApplications.Add(new Application()
+            {
+                FirstName = "Slavoj",
+                LastName = "Zizek",
+                EmailAddress = "zlazoj@spoko.pl",
+                PhoneNumber = "23456764",
+                ContactAgreement = true,
+                Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "zlazoj@spoko.pl"),
+                JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Younger chief executor" && x.HR.Company.Name == "Abibas"),
+                CvUrl = "www.google.com",
+                State = "Pending"
             });
             _context.SaveChanges();
             return View("Index");

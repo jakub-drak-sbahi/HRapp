@@ -24,6 +24,7 @@ namespace MainApp.Models
         public bool ContactAgreement { get; set; }
         [Required]
         public string CvUrl { get; set; }
+        public string State { get; set; }
         public Candidate Candidate { get; set; }
         public JobOffer JobOffer { get; set; }
     }
