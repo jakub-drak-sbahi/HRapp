@@ -78,6 +78,7 @@ namespace MainApp.Controllers
             hr.FirstName = model.FirstName;
             hr.LastName = model.LastName;
             hr.Company = model.Company;
+            hr.EmailAddress = model.EmailAddress;
             _context.Update(hr);
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", new { id = model.Id });
@@ -130,7 +131,8 @@ namespace MainApp.Controllers
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                CompanyId = model.CompanyId
+                CompanyId = model.CompanyId,
+                EmailAddress = model.EmailAddress
             };
 
             await _context.HRs.AddAsync(hr);
