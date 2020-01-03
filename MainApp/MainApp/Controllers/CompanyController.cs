@@ -28,6 +28,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             List<Company> searchResult;
 
             if (string.IsNullOrEmpty(searchString))
@@ -50,6 +51,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             if (id==null)
@@ -71,6 +73,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             Company company = _context.Companies.Find(id);
@@ -88,6 +91,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             return View();
@@ -100,6 +104,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             await _context.Companies.AddAsync(company);
@@ -112,6 +117,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             if (id==null)
@@ -133,6 +139,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             _context.Companies.Update(company);
@@ -144,6 +151,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             var model = _context.Companies.Find(id);

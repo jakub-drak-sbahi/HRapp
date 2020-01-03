@@ -30,7 +30,7 @@
                 <label>Phone number:</label>
                 <div class="content">@Model.PhoneNumber</div>
                 <div class="pt-4">
-                    <a asp-action="Edit" asp-route-id="@Model.Id">
+                    <a asp-controller="Candidate" asp-action="Edit" asp-route-id="@Model.Id">
                         <button class="btn btn-rounded btn-primary mx-2">
                             <i class="fa fa-edit pr-2"></i>
                             Edit

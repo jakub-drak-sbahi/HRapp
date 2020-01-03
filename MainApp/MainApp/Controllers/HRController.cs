@@ -119,6 +119,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             if (!ModelState.IsValid)
@@ -145,6 +146,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
             if (role != Role.ADMIN && (us == null || us.Id != id))
