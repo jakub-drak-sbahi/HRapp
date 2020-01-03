@@ -26,6 +26,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             List<Application> searchResult;
 
             if (string.IsNullOrEmpty(searchString))
@@ -65,6 +66,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
 
             if (role != Role.CANDIDATE)
                 return new UnauthorizedResult();
@@ -92,6 +94,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
 
             if (role != Role.CANDIDATE)
                 return new UnauthorizedResult();
@@ -174,6 +177,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
 
             if (role == Role.ADMIN)
@@ -213,6 +217,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             if (role != Role.HR)
                 return new UnauthorizedResult();
@@ -242,6 +247,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             if (role != Role.HR)
                 return new UnauthorizedResult();
@@ -269,6 +275,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             if (role != Role.CANDIDATE)
                 return new UnauthorizedResult();
@@ -300,6 +307,7 @@ namespace MainApp.Controllers
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             if (role != Role.CANDIDATE)
                 return new UnauthorizedResult();
