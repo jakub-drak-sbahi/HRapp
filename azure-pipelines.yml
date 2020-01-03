@@ -18,9 +18,11 @@ steps:
     dotnet build --configuration $(buildConfiguration)
 
 - task: AzureRmWebAppDeployment@4
+  displayName: 'Deploy Azure App Service'
   inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'HRapp'
-    appType: 'webApp'
-    WebAppName: 'TestWebApp121221'
-    VirtualApplication: 'HRminiapp'
+    azureSubscription: 'testwebapp121221 - Azure'
+    WebAppName: testwebapp121221
+    packageForLinux: '$(System.DefaultWorkingDirectory)\**\*.zip'
+    enableCustomDeployment: true
+    ExcludeFilesFromAppDataFlag: false
+
