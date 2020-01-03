@@ -18,7 +18,7 @@ namespace UnitTests
         {
             DataContext context = GetContext();
             HomeController controller = new HomeController(context);
-            var result = controller.Index() as ViewResult;
+            var result = controller.Index().Result as ViewResult;
 
             Assert.NotNull(result);
             Assert.True(string.IsNullOrEmpty(result.ViewName) || result.ViewName == "Index");
