@@ -39,6 +39,28 @@ namespace MainApp.Controllers
 
             return View(searchResult);
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> IndexAjax([FromQuery(Name = "search")] string searchString)
+        {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+            if (role != Role.ADMIN)
+                return new UnauthorizedResult();
+            if (string.IsNullOrEmpty(searchString))
+                return new JsonResult(await _context.Candidates.ToListAsync());
+
+            List<Candidate> searchResult = await _context
+                .Candidates
+                .Where(o => o.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                .ToListAsync();
+
+            return new JsonResult(searchResult);
+        }
+
+
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {

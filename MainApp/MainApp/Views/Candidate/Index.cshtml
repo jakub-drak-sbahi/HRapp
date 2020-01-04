@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-4 py-2">
-                    @using (Html.BeginForm("Index", "Candidate", FormMethod.Get))
+                    @using (Html.BeginForm("IndexAjax", "Candidate", FormMethod.Get))
                     {
                         <div class="input-group search-input"
                              style="border-radius: 20px">
@@ -51,7 +51,7 @@
                     <th style="width: 20px"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="myBody">
                 @foreach (var hr in Model.OrderBy(h => h.LastName))
                 {
                     <tr>
@@ -67,3 +67,24 @@
 
     </div>
 </div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(function () {
+            $('#button-search').on('click', function (evt) {
+                evt.preventDefault();
+                $.get("https://localhost:44391/Candidate/IndexAjax", $('form').serialize() ,function (data) {
+                    $('#myBody tr').remove();
+                    $.each(data, function (i, emp) {
+                        var $row = $('<tr/>');
+                        $row.append($('<td><a href="/Candidate/Details/1">' + emp.firstName + '</a></td>'));
+                        $row.append($('<td><a href="/Candidate/Details/1">' + emp.lastName + '</a></td>'));
+                        $row.append($('<td/>').html(emp.emailAddress));
+                        $row.append($('<td/>').html(emp.phoneNumber));
+                        $('#myBody').append($row);
+                    });
+                });
+            });
+        });
+    </script>
+}
