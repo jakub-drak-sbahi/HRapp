@@ -45,6 +45,8 @@ namespace MainApp
 
             var connection = Configuration["DatabaseConnectionString"];
             services.AddDbContext<DataContext>(options => options.UseSqlServer(connection));
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,6 +75,9 @@ namespace MainApp
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
     }
 }
