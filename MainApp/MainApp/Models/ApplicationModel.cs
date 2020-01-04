@@ -6,8 +6,6 @@ namespace MainApp.Models
     public class Application
     {
         public int Id { get; set; }
-        [Display(Name = "Offer")]
-        public int OfferId { get; set; }
         [Required]
         [Display(Name = "First name")]
         public string FirstName { get; set; }

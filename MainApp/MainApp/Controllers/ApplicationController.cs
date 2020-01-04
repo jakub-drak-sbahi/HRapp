@@ -84,8 +84,7 @@ namespace MainApp.Controllers
                 CvUrl = "TODO",
                 EmailAddress = email,
                 JobOffer = offer,
-                Candidate = candidate,
-                OfferId = id
+                Candidate = candidate
             };
             return View(model);
         }
@@ -106,7 +105,6 @@ namespace MainApp.Controllers
             Candidate candidate = _context.Candidates.Where(c => c.EmailAddress == email).First();
             model.JobOffer = offer;
             model.Candidate = candidate;
-            model.OfferId = offer.Id;
             model.CvUrl = "TODO";
             model.State = "Pending";
             //if (!ModelState.IsValid)
@@ -116,7 +114,6 @@ namespace MainApp.Controllers
 
             Application application = new Application
             {
-                OfferId = id,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 PhoneNumber = model.PhoneNumber,
