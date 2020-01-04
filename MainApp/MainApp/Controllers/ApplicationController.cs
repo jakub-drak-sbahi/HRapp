@@ -8,6 +8,8 @@ using MainApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace MainApp.Controllers
 {
@@ -99,7 +101,7 @@ namespace MainApp.Controllers
 
             if (role != Role.CANDIDATE)
                 return new UnauthorizedResult();
-            JobOffer offer = _context.JobOffers.Where(o => o.Id == id).First();
+            JobOffer offer = _context.JobOffers.Include(x=>x.HR).Where(o => o.Id == id).First();
             string email = AuthorizationTools.GetEmail(User);
             Candidate candidate = _context.Candidates.Where(c => c.EmailAddress == email).First();
             model.JobOffer = offer;
@@ -128,6 +130,17 @@ namespace MainApp.Controllers
 
             await _context.JobApplications.AddAsync(application);
             await _context.SaveChangesAsync();
+
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("290444@pw.edu.pl", "HRMiniApp");
+            var subject = "New application";
+            var to = new EmailAddress(offer.HR.EmailAddress);
+            var plainTextContent = "";
+            var htmlContent = $"<strong>Your Job Offer received new Application: https://localhost:5001/Application/Details/{ application.Id}</strong>";
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = await client.SendEmailAsync(msg);
+
             return RedirectToAction("Index");
         }
         [Authorize]
