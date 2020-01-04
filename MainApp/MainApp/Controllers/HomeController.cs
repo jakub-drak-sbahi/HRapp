@@ -37,7 +37,6 @@ namespace MainApp.Controllers
         }
 
 
-        [Route("Home/about")]
 
 		public IActionResult About()
 		{
@@ -67,7 +66,6 @@ namespace MainApp.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [Route("Home/clearContext")]
         public IActionResult ClearContext()
         {
             _context.Candidates.RemoveRange(_context.Candidates);
@@ -79,7 +77,6 @@ namespace MainApp.Controllers
             return View("Index");
         }
 
-        [Route("Home/addTestDataToContext")]
         public async Task<IActionResult> AddTestDataToContext()
         {
             _context.Candidates.Add(new Candidate() {

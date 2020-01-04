@@ -13,6 +13,7 @@ using SendGrid.Helpers.Mail;
 
 namespace MainApp.Controllers
 {
+    [Route("Application")]
     public class ApplicationController : Controller
     {
         private readonly DataContext _context;
@@ -22,24 +23,16 @@ namespace MainApp.Controllers
             _context = context;
         }
 
+        /// GET Application/Index
         /// <summary>
-        /// Creates a TodoItem.
+        /// Shows list of applications
         /// </summary>
         /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /Todo
-        ///     {
-        ///        "id": 1,
-        ///        "name": "Item1",
-        ///        "isComplete": true
-        ///     }
-        ///
+        /// Shows list of applications proper for user role.
         /// </remarks>
-        /// <param name="searchString"></param>
-        /// <returns>A newly created TodoItem</returns>
-        /// <response code="201">Returns the newly created item</response>
-        /// <response code="400">If the item is null</response>   
+        /// <param name="searchString">String containing search terms from View</param>
+        /// <returns>List of applications</returns>
+        [Route("Index")]
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
@@ -82,7 +75,9 @@ namespace MainApp.Controllers
             return View("IndexAdmin", searchResult);
         }
 
+        
         [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> Create(int id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
@@ -158,7 +153,10 @@ namespace MainApp.Controllers
 
             return RedirectToAction("Index");
         }
+
+        
         [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -299,7 +297,9 @@ namespace MainApp.Controllers
             return RedirectToAction("Index");
         }
 
+        
         [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> Delete(int? id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
