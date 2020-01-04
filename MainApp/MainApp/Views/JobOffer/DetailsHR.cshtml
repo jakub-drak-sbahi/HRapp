@@ -74,7 +74,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var app in Model.Applications.OrderBy(a => a.OfferId))
+                            @foreach (var app in Model.Applications.OrderBy(a => a.LastName))
                             {
                                 <tr>
                                     <td>@Html.ActionLink(app.JobOffer.JobTitle, "Details", "JobOffer", new { id = app.JobOffer.Id }, null)</td>

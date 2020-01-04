@@ -288,58 +288,49 @@ namespace MainApp.EntityFramework
                 PhoneNumber = "2377746467",
                 ContactAgreement = true,
                 CandidateId = 7,
-                OfferId = 4,
+                JobOfferId = 4,
+                CvUrl = "www.google.com",
+                State = "Pending"
+            },
+            new
+            {
+                Id = 2,
+                FirstName = "Ryszard",
+                LastName = "Lwie Serce",
+                EmailAddress = "deus@vultInfidels.com",
+                PhoneNumber = "435777654",
+                ContactAgreement = true,
+                CandidateId = 2,
+                JobOfferId = 2,
+                CvUrl = "www.google.com",
+                State = "Pending"
+            },
+            new
+            {
+                Id = 3,
+                FirstName = "Slavoj",
+                LastName = "Zizek",
+                EmailAddress = "zlazoj@spoko.pl",
+                PhoneNumber = "23456764",
+                ContactAgreement = true,
+                CandidateId = 9,
+                JobOfferId = 6,
+                CvUrl = "www.google.com",
+                State = "Pending"
+            },
+            new
+            {
+                Id = 4,
+                FirstName = "Slavoj",
+                LastName = "Zizek",
+                EmailAddress = "zlazoj@spoko.pl",
+                PhoneNumber = "23456764",
+                ContactAgreement = true,
+                CandidateId = 9,
+                JobOfferId = 7,
                 CvUrl = "www.google.com",
                 State = "Pending"
             });
-            //_context.JobApplications.Add(new Application()
-            //{
-            //    FirstName = "Ryszard",
-            //    LastName = "Lwie Serce",
-            //    EmailAddress = "deus@vultInfidels.com",
-            //    PhoneNumber = "435777654",
-            //    ContactAgreement = true,
-            //    Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.LastName == "Lwie Serce"),
-            //    JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Pirate recruiter" && x.HR.Company.Name == "Binbows"),
-            //    CvUrl = "www.google.com",
-            //    State = "Pending"
-            //});
-            //_context.JobApplications.Add(new Application()
-            //{
-            //    FirstName = "Bartosz",
-            //    LastName = "Walaszek",
-            //    EmailAddress = "otylypan@donna.com",
-            //    PhoneNumber = "2377746467",
-            //    ContactAgreement = true,
-            //    Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
-            //    JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Younger assisstant" && x.HR.Company.Name == "Dolce&Banana"),
-            //    CvUrl = "www.google.com",
-            //    State = "Pending"
-            //});
-            //_context.JobApplications.Add(new Application()
-            //{
-            //    FirstName = "Bartosz",
-            //    LastName = "Walaszek",
-            //    EmailAddress = "otylypan@donna.com",
-            //    PhoneNumber = "2377746467",
-            //    ContactAgreement = true,
-            //    Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "otylypan@donna.com"),
-            //    JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Butterfly Collector" && x.HR.Company.Name == "Abibas"),
-            //    CvUrl = "www.google.com",
-            //    State = "Pending"
-            //});
-            //_context.JobApplications.Add(new Application()
-            //{
-            //    FirstName = "Slavoj",
-            //    LastName = "Zizek",
-            //    EmailAddress = "zlazoj@spoko.pl",
-            //    PhoneNumber = "23456764",
-            //    ContactAgreement = true,
-            //    Candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.EmailAddress == "zlazoj@spoko.pl"),
-            //    JobOffer = await _context.JobOffers.FirstOrDefaultAsync(x => x.JobTitle == "Younger chief executor" && x.HR.Company.Name == "Abibas"),
-            //    CvUrl = "www.google.com",
-            //    State = "Pending"
-            //});
         }
     }
 }
