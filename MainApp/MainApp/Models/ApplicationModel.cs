@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MainApp.Models
 {
@@ -23,6 +25,9 @@ namespace MainApp.Models
         public bool ContactAgreement { get; set; }
         [Required]
         public string CvUrl { get; set; }
+        [NotMapped]
+        [Required(ErrorMessage = "You mus provide CV")]
+        public IFormFile File { get; set; }
         public string State { get; set; }
         public Candidate Candidate { get; set; }
         public JobOffer JobOffer { get; set; }

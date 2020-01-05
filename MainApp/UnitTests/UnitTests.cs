@@ -84,7 +84,7 @@ namespace UnitTests
         {
             DataContext context = GetContext();
             ApplicationController controller = new ApplicationController(context);
-            await Assert.ThrowsAsync<NullReferenceException>( () => controller.Index(null));
+            await Assert.ThrowsAsync<NullReferenceException>(() => controller.Index(null));
         }
     }
     public class UnitTestWithEmptyContext
