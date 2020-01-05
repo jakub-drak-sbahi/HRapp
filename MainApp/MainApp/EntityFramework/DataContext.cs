@@ -16,6 +16,7 @@ namespace MainApp.EntityFramework
         public DbSet<HR> HRs { get; set; }
         public DbSet<Candidate> Candidates { get; set; }
         public DbSet<Admin> Admins { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Candidate>().HasData(
@@ -331,6 +332,20 @@ namespace MainApp.EntityFramework
                 CvUrl = "www.google.com",
                 State = "Pending"
             });
+            modelBuilder.Entity<Comment>().HasData(
+            new
+            {
+                Id = 1,
+                Text = "Well well well",
+                ApplicationId = 3
+            },
+            new
+            {
+                Id = 2,
+                Text = "Well well",
+                ApplicationId = 4
+            }
+            );
         }
     }
 }

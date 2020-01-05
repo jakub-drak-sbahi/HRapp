@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace MainApp.Models
@@ -25,5 +26,6 @@ namespace MainApp.Models
         public string State { get; set; }
         public Candidate Candidate { get; set; }
         public JobOffer JobOffer { get; set; }
+        public List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }
