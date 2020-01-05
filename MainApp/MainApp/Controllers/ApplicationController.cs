@@ -214,6 +214,7 @@ namespace MainApp.Controllers
         }
 
         [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
