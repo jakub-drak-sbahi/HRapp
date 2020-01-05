@@ -36,6 +36,7 @@ namespace MainApp.Controllers
                      .Include(x => x.JobOffer)
                      .Include(x => x.JobOffer.HR)
                      .Include(x => x.JobOffer.HR.Company)
+                     .Include(x => x.Comments)
                      .ToListAsync();
             else
             {
@@ -44,6 +45,7 @@ namespace MainApp.Controllers
                     .Include(x => x.JobOffer)
                     .Include(x => x.JobOffer.HR)
                     .Include(x => x.JobOffer.HR.Company)
+                    .Include(x => x.Comments)
                     .Where(o => o.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                     .ToListAsync();
             }
@@ -140,6 +142,64 @@ namespace MainApp.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult> CreateCommentAjax(ApplicationWithComment model)
+        {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
+            if (role != Role.HR)
+                return new UnauthorizedResult();
+            Application app = _context.JobApplications
+                .Include(x => x.Comments)
+                .Include(x => x.JobOffer)
+                .Include(x => x.JobOffer.HR)
+                .Where(a => a.Id == model.Id).FirstOrDefault();
+            string email = AuthorizationTools.GetEmail(User);
+            HR hr = _context.HRs.Where(c => c.EmailAddress == email).First();
+            if(app.JobOffer.HR != hr)
+                return new UnauthorizedResult();
+
+            Comment comm = new Comment() { Text = model.CommentText, Application = app };
+
+            await _context.Comments.AddAsync(comm);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = model.Id });
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult> DeleteCommentAjax(int id)
+        {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
+            if (role != Role.HR)
+                return new UnauthorizedResult();
+            Comment comment = _context.Comments
+                .Include(x => x.Application)
+                .Include(x => x.Application.JobOffer)
+                .Include(x => x.Application.JobOffer.HR)
+                .Where(a => a.Id == id).FirstOrDefault();
+            if (comment == null)
+                return new UnauthorizedResult();
+            Application app = comment.Application;
+            string email = AuthorizationTools.GetEmail(User);
+            HR hr = _context.HRs.Where(c => c.EmailAddress == email).First();
+            if (comment.Application.JobOffer.HR != hr)
+                return new UnauthorizedResult();
+
+            _context.Comments.Remove(comment);
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction("Details", new { id = app.Id });
+        }
+
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -199,17 +259,18 @@ namespace MainApp.Controllers
                 .Include(x => x.Candidate)
                 .Include(x => x.JobOffer.HR)
                 .Include(x => x.JobOffer.HR.Company)
+                .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
             if (app == null)
                 return new NotFoundResult();
-
             if(role == Role.HR)
             {
                 HR us = _context.HRs.Where(c => c.EmailAddress == email).FirstOrDefault();
                 if (us == null || us.Id != app.JobOffer.HR.Id)
                     return new UnauthorizedResult();
-                return View("DetailsHR", app);
+                ApplicationWithComment appWithComm = new ApplicationWithComment(app);
+                return View("DetailsHR", appWithComm);
             }
             else
             {
@@ -237,6 +298,7 @@ namespace MainApp.Controllers
                 .Include(x => x.Candidate)
                 .Include(x => x.JobOffer.HR)
                 .Include(x => x.JobOffer.HR.Company)
+                .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
             if (app == null)
@@ -267,6 +329,7 @@ namespace MainApp.Controllers
                 .Include(x => x.Candidate)
                 .Include(x => x.JobOffer.HR)
                 .Include(x => x.JobOffer.HR.Company)
+                .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
             if (app == null)
@@ -299,6 +362,7 @@ namespace MainApp.Controllers
                 .Include(x => x.Candidate)
                 .Include(x => x.JobOffer.HR)
                 .Include(x => x.JobOffer.HR.Company)
+                .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
             if (app == null)
@@ -327,6 +391,7 @@ namespace MainApp.Controllers
                 .Include(x => x.Candidate)
                 .Include(x => x.JobOffer.HR)
                 .Include(x => x.JobOffer.HR.Company)
+                .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
             if (app == null)
