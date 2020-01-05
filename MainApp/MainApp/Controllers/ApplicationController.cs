@@ -13,6 +13,7 @@ using SendGrid.Helpers.Mail;
 
 namespace MainApp.Controllers
 {
+    [Route("Application")]
     public class ApplicationController : Controller
     {
         private readonly DataContext _context;
@@ -22,6 +23,16 @@ namespace MainApp.Controllers
             _context = context;
         }
 
+        /// GET Application/Index
+        /// <summary>
+        /// Shows list of applications
+        /// </summary>
+        /// <remarks>
+        /// Shows list of applications proper for user role.
+        /// </remarks>
+        /// <param name="searchString">String containing search terms from View</param>
+        /// <returns>List of applications</returns>
+        [Route("Index")]
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
@@ -64,7 +75,9 @@ namespace MainApp.Controllers
             return View("IndexAdmin", searchResult);
         }
 
+        
         [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> Create(int id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
@@ -140,7 +153,10 @@ namespace MainApp.Controllers
 
             return RedirectToAction("Index");
         }
+
+        
         [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -281,7 +297,9 @@ namespace MainApp.Controllers
             return RedirectToAction("Index");
         }
 
+        
         [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> Delete(int? id)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
