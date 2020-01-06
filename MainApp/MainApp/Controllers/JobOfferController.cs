@@ -151,6 +151,8 @@ namespace MainApp.Controllers
                 if (us.Id != offer.HR.Id)
                     return new UnauthorizedResult();
             }
+            List<Application> apps = await _context.JobApplications.Where(x => x.JobOffer == offer).ToListAsync();
+            _context.JobApplications.RemoveRange(apps);
             _context.JobOffers.Remove(offer);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
