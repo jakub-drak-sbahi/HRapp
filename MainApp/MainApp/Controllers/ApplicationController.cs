@@ -168,8 +168,14 @@ namespace MainApp.Controllers
             var subject = "New application";
             var to = new EmailAddress(offer.HR.EmailAddress);
             var plainTextContent = "";
-            var htmlContent = $"<strong>Your Job Offer received new Application: https://localhost:5001/Application/Details/{ model.Id}</strong>";
+            var htmlContent = $"<strong>Your Job Offer received new Application: <a href=https://localhost:5001/Application/Details/{ model.Id}>link</a> </strong>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var attachment = new Attachment()
+            {
+                Content = Convert.ToBase64String(fileData),
+                Filename = "cv.pdf"
+            };
+            msg.AddAttachment(attachment);
             var response = await client.SendEmailAsync(msg);
 
             return RedirectToAction("Index");
