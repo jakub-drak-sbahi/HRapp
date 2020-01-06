@@ -105,7 +105,7 @@ namespace MainApp.Controllers
             if (role == Role.CANDIDATE)
                 return new UnauthorizedResult();
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || (model.SalaryFrom != null && model.SalaryTo != null && model.SalaryFrom > model.SalaryTo))
             {
                 return View();
             }
@@ -143,7 +143,7 @@ namespace MainApp.Controllers
             {
                 return BadRequest($"id should not be null");
             }
-            var offer = await _context.JobOffers.FirstOrDefaultAsync(x => x.Id == id.Value);
+            var offer = await _context.JobOffers.Include(x => x.HR).FirstOrDefaultAsync(x => x.Id == id.Value);
             if (role == Role.HR)
             {
                 string email = AuthorizationTools.GetEmail(User);
@@ -178,7 +178,7 @@ namespace MainApp.Controllers
             if (role != Role.HR)
                 return new UnauthorizedResult();
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || (model.SalaryFrom != null && model.SalaryTo!= null && model.SalaryFrom > model.SalaryTo))
             {
                 return View(model);
             }

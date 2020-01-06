@@ -83,7 +83,7 @@ namespace UnitTests
         public async System.Threading.Tasks.Task IndexWithoutUserShouldRaiseNullReferenceException()
         {
             DataContext context = GetContext();
-            ApplicationController controller = new ApplicationController(context);
+            ApplicationController controller = new ApplicationController(context, null, null);
             await Assert.ThrowsAsync<NullReferenceException>(() => controller.Index(null));
         }
     }

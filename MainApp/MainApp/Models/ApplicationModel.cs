@@ -26,7 +26,7 @@ namespace MainApp.Models
         [Required]
         public string CvUrl { get; set; }
         [NotMapped]
-        [Required(ErrorMessage = "You mus provide CV")]
+        [Required(ErrorMessage = "You must provide CV")]
         public IFormFile File { get; set; }
         public string State { get; set; }
         public Candidate Candidate { get; set; }

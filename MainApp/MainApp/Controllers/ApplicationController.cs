@@ -124,10 +124,10 @@ namespace MainApp.Controllers
             JobOffer offer = _context.JobOffers.Include(x=>x.HR).Where(o => o.Id == model.Id).First();
             string email = AuthorizationTools.GetEmail(User);
             Candidate candidate = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            //if (!ModelState.IsValid)
-            //{
-            //    return View();
-            //}
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
 
             var uploads = Path.Combine(_env.WebRootPath, "uploads");
             bool exists = Directory.Exists(uploads);
@@ -182,7 +182,10 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
-
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Details", new { id = model.Id });
+            }
             if (role != Role.HR)
                 return new UnauthorizedResult();
             Application app = _context.JobApplications

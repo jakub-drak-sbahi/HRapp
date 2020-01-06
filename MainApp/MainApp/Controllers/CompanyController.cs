@@ -105,6 +105,10 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
             await _context.Companies.AddAsync(company);
@@ -142,6 +146,10 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (role != Role.ADMIN)
                 return new UnauthorizedResult();
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index"); 
