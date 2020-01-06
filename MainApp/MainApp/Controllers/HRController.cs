@@ -24,6 +24,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (await AuthorizationTools.IsAdmin(User, _context) == false)
                 return new UnauthorizedResult();
 
@@ -41,6 +44,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
             if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id.Value))
@@ -64,6 +70,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Edit(HR model)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
             if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != model.Id))
@@ -88,6 +97,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (await AuthorizationTools.IsAdmin(User, _context) == false)
                 return new UnauthorizedResult();
             if (id == null)
@@ -103,6 +115,9 @@ namespace MainApp.Controllers
         [Authorize]
         public async Task<ActionResult> Create()
         {
+            Role role = await AuthorizationTools.GetRoleAsync(User, _context);
+            ViewData.Add("role", role);
+            ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             if (await AuthorizationTools.IsAdmin(User, _context) == false)
                 return new UnauthorizedResult();
             var model = new HRCreateView

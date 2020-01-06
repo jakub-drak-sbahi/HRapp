@@ -59,8 +59,7 @@ namespace MainApp.Controllers
 
             return new JsonResult(searchResult);
         }
-
-
+        
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -81,7 +80,6 @@ namespace MainApp.Controllers
             {
                 return NotFound($"offer not found in DB");
             }
-
             return View(offer);
         }
 

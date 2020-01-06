@@ -182,10 +182,8 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction("Details", new { id = model.Id });
-            }
+            if(model.CommentText == "")
+                RedirectToAction("Details", new { id = model.Id });
             if (role != Role.HR)
                 return new UnauthorizedResult();
             Application app = _context.JobApplications
@@ -263,10 +261,10 @@ namespace MainApp.Controllers
             if (us == null || app == null || app.State != "Pending" || us.Id != app.Candidate.Id)
                 return new UnauthorizedResult();
 
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return View();
+            //}
             app.FirstName = model.FirstName;
             app.LastName = model.LastName;
             app.PhoneNumber = model.PhoneNumber;

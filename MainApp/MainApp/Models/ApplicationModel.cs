@@ -23,7 +23,6 @@ namespace MainApp.Models
         [Required]
         [Display(Name = "Contact agreement")]
         public bool ContactAgreement { get; set; }
-        [Required]
         public string CvUrl { get; set; }
         [NotMapped]
         [Required(ErrorMessage = "You must provide CV")]
