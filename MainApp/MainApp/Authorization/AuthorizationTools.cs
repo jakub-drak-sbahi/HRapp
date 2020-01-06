@@ -13,7 +13,7 @@ namespace MainApp.Authorization
     {
         public static string GetEmail(ClaimsPrincipal User)
         {
-            return User.Claims.ToList()[3].Value;
+                return User.Claims.FirstOrDefault(c => c.Type.ToString() == "emails").Value;
         }
 
         public static int GetUserDbId(ClaimsPrincipal User, DataContext context, Role role)

@@ -15,14 +15,14 @@
         {
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-controller="HR" asp-action="Details" asp-route-id="@ViewData["id"]">
-                    <span class="nav-text text-dark">Hello @User.Claims.ToList()[1].Value!</span>
+                    <span class="nav-text text-dark">Hello @User.Claims.FirstOrDefault(c => c.Type.ToString() == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value!</span>
                 </a>
             </li>
         }
         else
         {
             <li class="nav-item">
-                <span class="nav-text text-dark">Hello @User.Claims.ToList()[1].Value!</span>
+                <span class="nav-text text-dark">Hello @User.Claims.FirstOrDefault(c => c.Type.ToString() == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value!</span>
             </li>
         }
         <li class="nav-item">
