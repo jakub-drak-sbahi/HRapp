@@ -2,25 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MainApp.BlobStorage;
 using MainApp.Authorization;
 using MainApp.EntityFramework;
 using MainApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.IO;
 
 namespace MainApp.Controllers
 {
-    [Route("Application")]
     public class ApplicationController : Controller
     {
         private readonly DataContext _context;
+        private readonly BlobStorageService _blob;
+        private readonly IHostingEnvironment _env;
 
-        public ApplicationController(DataContext context)
+        public ApplicationController(DataContext context, BlobStorageService blob, IHostingEnvironment env)
         {
             _context = context;
+            _blob = blob;
+            _env = env;
         }
 
         /// GET Application/Index
@@ -107,7 +113,7 @@ namespace MainApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> Create(Application model, int id)
+        public async Task<ActionResult> Create([Bind("Id, FirstName, LastName, PhoneNumber, EmailAddress, ContactAgreement, CvUrl, File, State, JobOffer, Candidate")] Application model)
         {
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
@@ -115,30 +121,43 @@ namespace MainApp.Controllers
 
             if (role != Role.CANDIDATE)
                 return new UnauthorizedResult();
-            JobOffer offer = _context.JobOffers.Include(x=>x.HR).Where(o => o.Id == id).First();
+            JobOffer offer = _context.JobOffers.Include(x=>x.HR).Where(o => o.Id == model.Id).First();
             string email = AuthorizationTools.GetEmail(User);
             Candidate candidate = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            model.JobOffer = offer;
-            model.Candidate = candidate;
-            model.CvUrl = "TODO";
-            model.State = "Pending";
             //if (!ModelState.IsValid)
             //{
             //    return View();
             //}
 
-            Application application = new Application
+            var uploads = Path.Combine(_env.WebRootPath, "uploads");
+            bool exists = Directory.Exists(uploads);
+            if (!exists)
+               Directory.CreateDirectory(uploads);            
+            var fileName = Path.GetFileName(model.File.FileName);
+            var fileStream = new FileStream(Path.Combine(uploads, model.File.FileName), FileMode.Create);
+            string mimeType = model.File.ContentType;
+            byte[] fileData = null;
+            using (var memoryStream = new MemoryStream())
+            {
+               model.File.CopyTo(memoryStream);
+               fileData = memoryStream.ToArray();
+            }            
+            model.CvUrl = _blob.UploadFileToBlob(model.File.FileName, fileData, mimeType);
+
+            Application application = new Application()
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                PhoneNumber = model.PhoneNumber,
                 EmailAddress = model.EmailAddress,
-                ContactAgreement = model.ContactAgreement,
+                PhoneNumber = model.PhoneNumber,
                 CvUrl = model.CvUrl,
-                Candidate = model.Candidate,
-                JobOffer = model.JobOffer,
-                State = model.State
+                ContactAgreement = model.ContactAgreement,
+                Comments = model.Comments,
+                Candidate = candidate,
+                JobOffer = offer,
+                State = "Pending"
             };
+
 
             await _context.JobApplications.AddAsync(application);
             await _context.SaveChangesAsync();
@@ -149,7 +168,7 @@ namespace MainApp.Controllers
             var subject = "New application";
             var to = new EmailAddress(offer.HR.EmailAddress);
             var plainTextContent = "";
-            var htmlContent = $"<strong>Your Job Offer received new Application: https://localhost:5001/Application/Details/{ application.Id}</strong>";
+            var htmlContent = $"<strong>Your Job Offer received new Application: https://localhost:5001/Application/Details/{ model.Id}</strong>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg);
 
