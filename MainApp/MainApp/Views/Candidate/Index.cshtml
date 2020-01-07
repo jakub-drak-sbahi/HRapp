@@ -73,7 +73,7 @@
         $(function () {
             $('#button-search').on('click', function (evt) {
                 evt.preventDefault();
-                $.get("https://localhost:44391/Candidate/IndexAjax", $('form').serialize() ,function (data) {
+                $.get("https://localhost:5001/Candidate/IndexAjax", $('form').serialize() ,function (data) {
                     $('#myBody tr').remove();
                     $.each(data, function (i, emp) {
                         var $row = $('<tr/>');
