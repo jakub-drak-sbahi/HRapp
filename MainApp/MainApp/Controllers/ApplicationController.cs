@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace MainApp.Controllers
 {
@@ -21,12 +22,14 @@ namespace MainApp.Controllers
         private readonly DataContext _context;
         private readonly BlobStorageService _blob;
         private readonly IHostingEnvironment _env;
+        private string apiKey;
 
-        public ApplicationController(DataContext context, BlobStorageService blob, IHostingEnvironment env)
+        public ApplicationController(DataContext context, BlobStorageService blob, IHostingEnvironment env, IConfiguration config)
         {
             _context = context;
             _blob = blob;
             _env = env;
+            apiKey = config.GetSection("SendGridKey").Value;
         }
 
         /// GET Application/Index
@@ -161,8 +164,7 @@ namespace MainApp.Controllers
 
             await _context.JobApplications.AddAsync(application);
             await _context.SaveChangesAsync();
-
-            var apiKey = "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";
+            
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("290444@pw.edu.pl", "HRMiniApp");
             var subject = "New application";
