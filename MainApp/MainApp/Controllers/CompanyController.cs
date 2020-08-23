@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using MainApp.Authorization;
@@ -32,17 +31,22 @@ namespace MainApp.Controllers
             List<Company> searchResult;
 
             if (string.IsNullOrEmpty(searchString))
+            {
                 searchResult = await _context.Companies.ToListAsync();
+            }
             else
+            {
                 searchResult = await _context
                 .Companies
                 .Where(o => o.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 .ToListAsync();
-            
-            if(role == Role.ADMIN)
+            }
+
+            if (role == Role.ADMIN)
             {
                 return View("IndexAdmin", searchResult);
             }
+
             return View("IndexHRAndCandidate", searchResult);
         }
 
@@ -52,17 +56,22 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
-            if (id==null)
+            }
+            if (id == null)
             {
                 return NotFound();
             }
+
             Company company = await _context.Companies.FindAsync(id);
-            if(company==null)
+            if (company == null)
             {
                 return NotFound();
             }
+
             return View(company);
         }
 
@@ -74,15 +83,21 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
+
             Company company = _context.Companies.Find(id);
-            if(company==null)
+            if (company == null)
             {
                 return NotFound();
             }
+
             _context.Companies.Remove(company);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -92,9 +107,8 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
-            if (role != Role.ADMIN)
-                return new UnauthorizedResult();
-            return View();
+
+            return role != Role.ADMIN ? new UnauthorizedResult() : (ActionResult)View();
         }
 
         [HttpPost, ActionName("Create")]
@@ -105,14 +119,19 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (!ModelState.IsValid)
             {
                 return View();
             }
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
+
             await _context.Companies.AddAsync(company);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -122,17 +141,22 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
-            if (id==null)
+            }
+            if (id == null)
             {
                 return NotFound();
             }
+
             Company company = await _context.Companies.FindAsync(id);
-            if(company==null)
+            if (company == null)
             {
                 return NotFound();
             }
+
             return View(company);
         }
 
@@ -144,15 +168,20 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
             if (!ModelState.IsValid)
             {
                 return View();
             }
+
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index"); 
+
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Details(int id)
@@ -160,9 +189,14 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
+
             var model = _context.Companies.Find(id);
+
             return View("Details", model);
         }
     }
