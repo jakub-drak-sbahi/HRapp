@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MainApp.Models;
@@ -21,8 +19,8 @@ namespace MainApp.Controllers
         }
 
         public async Task<IActionResult> Index()
-        {   
-            if(User != null && User.Identity.IsAuthenticated)
+        {
+            if (User != null && User.Identity.IsAuthenticated)
             {
                 Role role = await AuthorizationTools.GetRoleAsync(User, _context);
                 ViewData.Add("role", role);
@@ -38,24 +36,26 @@ namespace MainApp.Controllers
 
 
 
-		public IActionResult About()
-		{
-			ViewData["Message"] = "Your application description page.";
+        public IActionResult About()
+        {
+            ViewData["Message"] = "Your application description page.";
             ViewData.Add("role", Role.CANDIDATE);
-            return View();
- 
-		}
 
-		public IActionResult Contact()
-		{
-			ViewData["Message"] = "Your contact page.";
-            ViewData.Add("role", Role.CANDIDATE);
             return View();
-		}
+        }
+
+        public IActionResult Contact()
+        {
+            ViewData["Message"] = "Your contact page.";
+            ViewData.Add("role", Role.CANDIDATE);
+
+            return View();
+        }
 
         public IActionResult Privacy()
         {
             ViewData.Add("role", Role.CANDIDATE);
+
             return View();
         }
 
@@ -63,6 +63,7 @@ namespace MainApp.Controllers
         public IActionResult Error()
         {
             ViewData.Add("role", Role.CANDIDATE);
+
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
@@ -74,113 +75,136 @@ namespace MainApp.Controllers
             _context.HRs.RemoveRange(_context.HRs);
             _context.JobOffers.RemoveRange(_context.JobOffers);
             _context.SaveChanges();
+
             return View("Index");
         }
 
         public async Task<IActionResult> AddTestDataToContext()
         {
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Johny",
                 LastName = "English",
                 EmailAddress = "beans@yahoo.com",
                 PhoneNumber = "889273765"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Ryszard",
                 LastName = "Lwie Serce",
                 EmailAddress = "deus@vult.com",
                 PhoneNumber = "435777654"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Hannibal",
                 LastName = "Lecter",
                 EmailAddress = "hannibal@mini.pw.edu.pl",
                 PhoneNumber = "566433567"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Jack",
                 LastName = "Nicolson",
                 EmailAddress = "jackkk@yahoo.com",
                 PhoneNumber = "567372372"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Lyudmiła",
                 LastName = "Pawliczenko",
                 EmailAddress = "priviet@yahoo.com",
                 PhoneNumber = "678363862"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Pharrel",
                 LastName = "Williams",
                 EmailAddress = "phrl@yahoo.com",
                 PhoneNumber = "6472638263"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Grzegorz",
                 LastName = "Zizek",
                 EmailAddress = "zlazoj@protonmail.com",
                 PhoneNumber = "736482963"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Bartosz",
                 LastName = "Walaszek",
                 EmailAddress = "otylypan@donna.com",
                 PhoneNumber = "2377746467"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Bruce",
                 LastName = "Wayne",
                 EmailAddress = "batman@gotham.com",
                 PhoneNumber = "367473783"
             });
-            _context.Candidates.Add(new Candidate() {
+            _context.Candidates.Add(new Candidate()
+            {
 
                 FirstName = "Slavoj",
                 LastName = "Zizek",
                 EmailAddress = "zlazoj@spoko.pl",
                 PhoneNumber = "74638368"
             });
-            _context.SaveChanges();
-            _context.Companies.Add(new Company() {
+
+            _context.Companies.Add(new Company()
+            {
                 Name = "Abibas"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "Niky"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "Binbows"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "Facefood"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "Sunbucks coffee"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "Polystation"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "Dolce&Banana"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "KFG"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "Hike"
             });
-            _context.Companies.Add(new Company() {
+            _context.Companies.Add(new Company()
+            {
                 Name = "Drunkin nonuts"
             });
+
             _context.SaveChanges();
+
             _context.HRs.Add(new HR()
             {
                 FirstName = "Bogumiła",
@@ -230,7 +254,9 @@ namespace MainApp.Controllers
                 EmailAddress = "katarzyna.testowa@spoko.pl",
                 Company = await _context.Companies.FirstOrDefaultAsync(x => x.Name == "Abibas")
             });
+
             _context.SaveChanges();
+
             _context.JobOffers.Add(new JobOffer()
             {
                 JobTitle = "Package manager",
@@ -294,7 +320,9 @@ namespace MainApp.Controllers
                 " League topsail Blimey trysail yo-ho-ho rutters yawl scuttle dance the hempen jig Brethren of the Coast." +
                 " Warp measured fer yer chains six pounders rope's end lugger Pieces of Eight killick black spot hempen halter man-of-war."
             });
+
             _context.SaveChanges();
+
             _context.JobApplications.Add(new Application()
             {
                 FirstName = "Bartosz",
@@ -355,7 +383,9 @@ namespace MainApp.Controllers
                 CvUrl = "www.google.com",
                 State = "Pending"
             });
+
             _context.SaveChanges();
+
             return View("Index");
         }
     }
