@@ -10,10 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using System.IO;
-using Microsoft.Extensions.Configuration;
+using MainApp.SendGrid;
 
 namespace MainApp.Controllers
 {
@@ -22,14 +20,14 @@ namespace MainApp.Controllers
         private readonly DataContext _context;
         private readonly BlobStorageService _blob;
         private readonly IHostingEnvironment _env;
-        private string apiKey;
+        private readonly SendEmailService _emailService;
 
-        public ApplicationController(DataContext context, BlobStorageService blob, IHostingEnvironment env, IConfiguration config)
+        public ApplicationController(DataContext context, BlobStorageService blob, IHostingEnvironment env, SendEmailService emailService)
         {
             _context = context;
             _blob = blob;
             _env = env;
-            apiKey = config.GetSection("SendGridKey").Value;
+            _emailService = emailService;
         }
 
         /// GET Application/Index
@@ -164,21 +162,8 @@ namespace MainApp.Controllers
 
             await _context.JobApplications.AddAsync(application);
             await _context.SaveChangesAsync();
-            
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("290444@pw.edu.pl", "HRMiniApp");
-            var subject = "New application";
-            var to = new EmailAddress(offer.HR.EmailAddress);
-            var plainTextContent = "";
-            var htmlContent = $"<strong>Your Job Offer received new Application: <a href=https://localhost:5001/Application/Details/{ model.Id}>link</a> </strong>";
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            var attachment = new Attachment()
-            {
-                Content = Convert.ToBase64String(fileData),
-                Filename = "cv.pdf"
-            };
-            msg.AddAttachment(attachment);
-            var response = await client.SendEmailAsync(msg);
+
+            await _emailService.SendApplicationAlert(model.Id, offer.HR.EmailAddress, fileData);           
 
             return RedirectToAction("Index");
         }
