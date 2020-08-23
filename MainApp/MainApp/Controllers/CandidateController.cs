@@ -27,10 +27,15 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
             if (string.IsNullOrEmpty(searchString))
+            {
                 return View(await _context.Candidates.ToListAsync());
+            }
 
             List<Candidate> searchResult = await _context
                 .Candidates
@@ -47,10 +52,15 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
             if (string.IsNullOrEmpty(searchString))
+            {
                 return new JsonResult(await _context.Candidates.ToListAsync());
+            }
 
             List<Candidate> searchResult = await _context
                 .Candidates
@@ -59,7 +69,7 @@ namespace MainApp.Controllers
 
             return new JsonResult(searchResult);
         }
-        
+
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -68,18 +78,22 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            if (role != Role.ADMIN && (us == null || us.Id != id.Value))
-                return new UnauthorizedResult();
 
+            if (role != Role.ADMIN && (us == null || us.Id != id.Value))
+            {
+                return new UnauthorizedResult();
+            }
             if (id == null)
             {
                 return BadRequest($"id shouldn't not be null");
             }
+
             var offer = await _context.Candidates.FirstOrDefaultAsync(x => x.Id == id.Value);
             if (offer == null)
             {
                 return NotFound($"offer not found in DB");
             }
+
             return View(offer);
         }
 
@@ -93,9 +107,11 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).First();
-            if (role != Role.ADMIN && (us == null || us.Id != model.Id))
-                return new UnauthorizedResult();
 
+            if (role != Role.ADMIN && (us == null || us.Id != model.Id))
+            {
+                return new UnauthorizedResult();
+            }
             if (!ModelState.IsValid)
             {
                 return View();
@@ -106,8 +122,10 @@ namespace MainApp.Controllers
             candidate.LastName = model.LastName;
             candidate.EmailAddress = model.EmailAddress;
             candidate.PhoneNumber = model.PhoneNumber;
+
             _context.Update(candidate);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Details", new { id = model.Id });
         }
 
@@ -118,8 +136,11 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
             if (id == null)
             {
                 return BadRequest($"id should not be null");
@@ -127,6 +148,7 @@ namespace MainApp.Controllers
 
             _context.Candidates.Remove(new Candidate() { Id = id.Value });
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -139,13 +161,19 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault();
-            if (role != Role.ADMIN && (us == null || us.Id != id))
-                return new UnauthorizedResult();
 
-            var candidate = await _context.Candidates
-                .FirstOrDefaultAsync(x => x.Id == id);
+            if (role != Role.ADMIN && (us == null || us.Id != id))
+            {
+                return new UnauthorizedResult();
+            }
+
+            var candidate = await _context.Candidates.FirstOrDefaultAsync(x => x.Id == id);
+
             if (role == Role.ADMIN)
+            {
                 return View("DetailsAdmin", candidate);
+            }
+
             return View("DetailsCandidate", candidate);
         }
     }
