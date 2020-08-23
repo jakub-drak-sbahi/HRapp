@@ -50,12 +50,14 @@ namespace MainApp.Controllers
             List<Application> searchResult;
 
             if (string.IsNullOrEmpty(searchString))
+            {
                 searchResult = await _context.JobApplications
                      .Include(x => x.JobOffer)
                      .Include(x => x.JobOffer.HR)
                      .Include(x => x.JobOffer.HR.Company)
                      .Include(x => x.Comments)
                      .ToListAsync();
+            }
             else
             {
                 searchResult = await _context
@@ -67,6 +69,7 @@ namespace MainApp.Controllers
                     .Where(o => o.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                     .ToListAsync();
             }
+
             if (role == Role.HR)
             {
                 string email = AuthorizationTools.GetEmail(User);
@@ -81,6 +84,7 @@ namespace MainApp.Controllers
                 searchResult = searchResult.Where(a => a.Candidate == us).ToList();
                 return View("IndexCandidate", searchResult);
             }
+
             return View("IndexAdmin", searchResult);
         }
 
@@ -94,7 +98,10 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
 
             if (role != Role.CANDIDATE)
+            {
                 return new UnauthorizedResult();
+            }
+
             JobOffer offer = _context.JobOffers.Where(o => o.Id == id).First();
             string email = AuthorizationTools.GetEmail(User);
             Candidate candidate = _context.Candidates.Where(c => c.EmailAddress == email).First();
@@ -108,6 +115,7 @@ namespace MainApp.Controllers
                 JobOffer = offer,
                 Candidate = candidate
             };
+
             return View(model);
         }
 
@@ -121,10 +129,14 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
 
             if (role != Role.CANDIDATE)
+            {
                 return new UnauthorizedResult();
+            }
+
             JobOffer offer = _context.JobOffers.Include(x=>x.HR).Where(o => o.Id == model.Id).First();
             string email = AuthorizationTools.GetEmail(User);
             Candidate candidate = _context.Candidates.Where(c => c.EmailAddress == email).First();
+
             if (!ModelState.IsValid)
             {
                 return View();
@@ -133,7 +145,10 @@ namespace MainApp.Controllers
             var uploads = Path.Combine(_env.WebRootPath, "uploads");
             bool exists = Directory.Exists(uploads);
             if (!exists)
-               Directory.CreateDirectory(uploads);            
+            {
+                Directory.CreateDirectory(uploads);
+            }
+
             var fileName = Path.GetFileName(model.File.FileName);
             var fileStream = new FileStream(Path.Combine(uploads, model.File.FileName), FileMode.Create);
             string mimeType = model.File.ContentType;
@@ -159,7 +174,6 @@ namespace MainApp.Controllers
                 State = "Pending"
             };
 
-
             await _context.JobApplications.AddAsync(application);
             await _context.SaveChangesAsync();
 
@@ -175,10 +189,16 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
-            if(model.CommentText == "")
+
+            if (model.CommentText == "")
+            {
                 RedirectToAction("Details", new { id = model.Id });
+            }
             if (role != Role.HR)
+            {
                 return new UnauthorizedResult();
+            }
+
             Application app = _context.JobApplications
                 .Include(x => x.Comments)
                 .Include(x => x.JobOffer)
@@ -186,8 +206,11 @@ namespace MainApp.Controllers
                 .Where(a => a.Id == model.Id).FirstOrDefault();
             string email = AuthorizationTools.GetEmail(User);
             HR hr = _context.HRs.Where(c => c.EmailAddress == email).First();
-            if(app.JobOffer.HR != hr)
+
+            if (app.JobOffer.HR != hr)
+            {
                 return new UnauthorizedResult();
+            }
 
             Comment comm = new Comment() { Text = model.CommentText, Application = app };
 
@@ -206,19 +229,29 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
 
             if (role != Role.HR)
+            {
                 return new UnauthorizedResult();
+            }
+
             Comment comment = _context.Comments
                 .Include(x => x.Application)
                 .Include(x => x.Application.JobOffer)
                 .Include(x => x.Application.JobOffer.HR)
                 .Where(a => a.Id == id).FirstOrDefault();
+
             if (comment == null)
+            {
                 return new UnauthorizedResult();
+            }
+
             Application app = comment.Application;
             string email = AuthorizationTools.GetEmail(User);
             HR hr = _context.HRs.Where(c => c.EmailAddress == email).First();
+
             if (comment.Application.JobOffer.HR != hr)
+            {
                 return new UnauthorizedResult();
+            }
 
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
@@ -234,11 +267,15 @@ namespace MainApp.Controllers
             {
                 return BadRequest($"id shouldn't not be null");
             }
+
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(h => h.EmailAddress == email).FirstOrDefault();
             var app = await _context.JobApplications.FirstOrDefaultAsync(x => x.Id == id.Value);
-            if (us == null || app == null || app.State!="Pending" || us.Id != app.Candidate.Id)
+
+            if (us == null || app == null || app.State != "Pending" || us.Id != app.Candidate.Id)
+            {
                 return new UnauthorizedResult();
+            }
 
             return View(app);
         }
@@ -251,21 +288,22 @@ namespace MainApp.Controllers
             string email = AuthorizationTools.GetEmail(User);
             Candidate us = _context.Candidates.Where(h => h.EmailAddress == email).FirstOrDefault();
             var app = await _context.JobApplications.FirstOrDefaultAsync(x => x.Id == model.Id);
-            if (us == null || app == null || app.State != "Pending" || us.Id != app.Candidate.Id)
-                return new UnauthorizedResult();
 
-            //if (!ModelState.IsValid)
-            //{
-            //    return View();
-            //}
+            if (us == null || app == null || app.State != "Pending" || us.Id != app.Candidate.Id)
+            {
+                return new UnauthorizedResult();
+            }
+
             app.FirstName = model.FirstName;
             app.LastName = model.LastName;
             app.PhoneNumber = model.PhoneNumber;
             app.EmailAddress = model.EmailAddress;
             app.ContactAgreement = model.ContactAgreement;
             app.CvUrl = model.CvUrl;
+
             _context.Update(app);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Details", new { id = model.Id });
         }
 
@@ -279,7 +317,9 @@ namespace MainApp.Controllers
             string email = AuthorizationTools.GetEmail(User);
 
             if (role == Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
 
             Application app = _context.JobApplications
                 .Include(x => x.JobOffer)
@@ -289,21 +329,30 @@ namespace MainApp.Controllers
                 .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
+
             if (app == null)
+            {
                 return new NotFoundResult();
+            }
+
             if(role == Role.HR)
             {
                 HR us = _context.HRs.Where(c => c.EmailAddress == email).FirstOrDefault();
                 if (us == null || us.Id != app.JobOffer.HR.Id)
+                {
                     return new UnauthorizedResult();
+                }
                 ApplicationWithComment appWithComm = new ApplicationWithComment(app);
+
                 return View("DetailsHR", appWithComm);
             }
             else
             {
                 Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault();
                 if (us == null || us.Id != app.Candidate.Id)
+                {
                     return new UnauthorizedResult();
+                }
 
                 return View("DetailsCandidate", app);
             }
@@ -318,8 +367,12 @@ namespace MainApp.Controllers
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
+
             if (role != Role.HR)
+            {
                 return new UnauthorizedResult();
+            }
+
             Application app = _context.JobApplications
                 .Include(x => x.JobOffer)
                 .Include(x => x.Candidate)
@@ -328,15 +381,21 @@ namespace MainApp.Controllers
                 .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
+
             if (app == null)
             {
                 return NotFound();
             }
+
             HR us = _context.HRs.Where(c => c.EmailAddress == email).FirstOrDefault();
             if (us == null || app.State != "Pending" || us.Id != app.JobOffer.HR.Id)
+            {
                 return new UnauthorizedResult();
+            }
+
             app.State = "Accepted";
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -349,8 +408,12 @@ namespace MainApp.Controllers
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
+
             if (role != Role.HR)
+            {
                 return new UnauthorizedResult();
+            }
+
             Application app = _context.JobApplications
                 .Include(x => x.JobOffer)
                 .Include(x => x.Candidate)
@@ -359,15 +422,21 @@ namespace MainApp.Controllers
                 .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
+
             if (app == null)
             {
                 return NotFound();
             }
+
             HR us = _context.HRs.Where(c => c.EmailAddress == email).FirstOrDefault();
             if (us == null || app.State != "Pending" || us.Id != app.JobOffer.HR.Id)
+            {
                 return new UnauthorizedResult();
+            }
+
             app.State = "Rejected";
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -380,12 +449,16 @@ namespace MainApp.Controllers
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
+
             if (role != Role.CANDIDATE)
+            {
                 return new UnauthorizedResult();
+            }
             if (id == null)
             {
                 return NotFound();
             }
+
             Application app = _context.JobApplications
                 .Include(x => x.JobOffer)
                 .Include(x => x.Candidate)
@@ -394,13 +467,18 @@ namespace MainApp.Controllers
                 .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
+
             if (app == null)
             {
                 return NotFound();
             }
+
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault();
             if (us == null || app.State != "Pending" || us.Id != app.Candidate.Id)
+            {
                 return new UnauthorizedResult();
+            }
+
             return View(app);
         }
 
@@ -413,8 +491,12 @@ namespace MainApp.Controllers
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
+
             if (role != Role.CANDIDATE)
+            {
                 return new UnauthorizedResult();
+            }
+
             Application app = _context.JobApplications
                 .Include(x => x.JobOffer)
                 .Include(x => x.Candidate)
@@ -423,15 +505,21 @@ namespace MainApp.Controllers
                 .Include(x => x.Comments)
                 .Where(a => a.Id == id)
                 .FirstOrDefault();
+
             if (app == null)
             {
                 return NotFound();
             }
+
             Candidate us = _context.Candidates.Where(c => c.EmailAddress == email).FirstOrDefault();
             if (us == null || app.State != "Pending" || us.Id != app.Candidate.Id)
+            {
                 return new UnauthorizedResult();
+            }
+
             _context.JobApplications.Remove(app);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
     }
