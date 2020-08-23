@@ -27,11 +27,15 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
-            if (await AuthorizationTools.IsAdmin(User, _context) == false)
-                return new UnauthorizedResult();
 
+            if (await AuthorizationTools.IsAdmin(User, _context) == false)
+            {
+                return new UnauthorizedResult();
+            }
             if (string.IsNullOrEmpty(searchString))
+            {
                 return View(await _context.HRs.Include(x => x.Company).ToListAsync());
+            }
 
             List<HR> searchResult = await _context
                 .HRs.Include(x => x.Company)
@@ -49,13 +53,16 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id.Value))
-                return new UnauthorizedResult();
 
+            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != id.Value))
+            {
+                return new UnauthorizedResult();
+            }
             if (id == null)
             {
                 return BadRequest($"id shouldn't not be null");
             }
+
             var hr = await _context.HRs.FirstOrDefaultAsync(x => x.Id == id.Value);
             if (hr == null)
             {
@@ -75,9 +82,11 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
-            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != model.Id))
-                return new UnauthorizedResult();
 
+            if (await AuthorizationTools.IsAdmin(User, _context) == false && (us == null || us.Id != model.Id))
+            {
+                return new UnauthorizedResult();
+            }
             if (!ModelState.IsValid)
             {
                 return View();
@@ -88,8 +97,10 @@ namespace MainApp.Controllers
             hr.LastName = model.LastName;
             hr.Company = model.Company;
             hr.EmailAddress = model.EmailAddress;
+
             _context.Update(hr);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Details", new { id = model.Id });
         }
 
@@ -100,8 +111,11 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (await AuthorizationTools.IsAdmin(User, _context) == false)
+            {
                 return new UnauthorizedResult();
+            }
             if (id == null)
             {
                 return BadRequest($"id should not be null");
@@ -109,6 +123,7 @@ namespace MainApp.Controllers
 
             _context.HRs.Remove(new HR() { Id = id.Value });
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -118,12 +133,17 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (await AuthorizationTools.IsAdmin(User, _context) == false)
+            {
                 return new UnauthorizedResult();
-            var model = new HRCreateView
+            }
+
+            var model = new HRCreateView()
             {
                 Companies = await _context.Companies.ToListAsync()
             };
+
             return View(model);
         }
 
@@ -135,15 +155,18 @@ namespace MainApp.Controllers
             Role role = await AuthorizationTools.GetRoleAsync(User, _context);
             ViewData.Add("role", role);
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
+
             if (role != Role.ADMIN)
+            {
                 return new UnauthorizedResult();
+            }
             if (!ModelState.IsValid)
             {
                 model.Companies = await _context.Companies.ToListAsync();
                 return View(model);
             }
 
-            HR hr = new HR
+            HR hr = new HR()
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -153,6 +176,7 @@ namespace MainApp.Controllers
 
             await _context.HRs.AddAsync(hr);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -164,17 +188,21 @@ namespace MainApp.Controllers
             ViewData.Add("id", AuthorizationTools.GetUserDbId(User, _context, role));
             string email = AuthorizationTools.GetEmail(User);
             HR us = _context.HRs.Where(h => h.EmailAddress == email).FirstOrDefault();
-            if (role != Role.ADMIN && (us == null || us.Id != id))
-                return new UnauthorizedResult();
 
-            if (role == Role.CANDIDATE)
+            if (role != Role.ADMIN && (us == null || us.Id != id))
+            {
                 return new UnauthorizedResult();
+            }
+            if (role == Role.CANDIDATE)
+            {
+                return new UnauthorizedResult();
+            }
+
             var hr = await _context.HRs
                 .Include(x => x.Company)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (role == Role.ADMIN)
-                return View("DetailsAdmin", hr);
-            return View("DetailsHR", hr);
+
+            return role == Role.ADMIN ? View("DetailsAdmin", hr) : View("DetailsHR", hr);
         }
     }
 }
